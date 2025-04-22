@@ -34,14 +34,13 @@ unordered_map<string, Goods> GoodsList::getGoodsList() const
     return goodsList;
 }
 
-Goods *GoodsList::findGoodsByName(const string &name)
+vector<Goods> GoodsList::findGoodsByName(const string &name) const
 {
+    vector<Goods> result;
     auto it = goodsList.find(name);
     if (it != goodsList.end())
-    {
-        return &it->second;
-    }
-    return nullptr;
+        result.push_back(it->second);
+    return result;
 }
 
 void GoodsList::iterateGoods() const
@@ -49,23 +48,39 @@ void GoodsList::iterateGoods() const
     for (const auto &pair : goodsList)
     {
         cout << "Name: " << pair.first
+             << "Descripsion: " << pair.second.getDesc()
              << ", Category: " << pair.second.getCategory()
              << ", Price: " << pair.second.getPrice()
-             << ", Storage: " << pair.second.getStorage() << endl;
+             << ", Storage: " << pair.second.getStorage() << "\n";
     }
 }
 
-vector<string> GoodsList::findGoodsByCategory(Category category) const
+template <typename T>
+vector<Goods> GoodsList::findGoods(T value, int param) const
 {
-    vector<string> result;
-    for (const auto &pair : goodsList)
+    vector<Goods> result;
+    switch (param)
     {
-        if (pair.second.getCategory() == category)
-        {
-            result.push_back(pair.first);
-        }
+    case 1: // desc
+        for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
+            if (*it->second.getDesc() == value)
+                result.push_back(*it);
+        break;
+    case 2: // category
+        for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
+            if (*it->second.getCategory() == value)
+                result.push_back(*it);
+    case 3: // price
+        for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
+            if (*it->second.getPrice() == value)
+                result.push_back(*it);
+    case 4: // storage
+        for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
+            if (*ir->second.getStorage() == value)
+                result.push_back(*it);
+    default:
+        break;
     }
-    return result;
 }
 
 bool GoodsList::deleteGoods(const string &name)
@@ -98,7 +113,9 @@ bool GoodsList::updateGoods(const string &name, const Goods &newGoods)
     auto it = goodsList.find(name);
     if (it != goodsList.end())
     {
-        it->second = newGoods;
+        Goods updateGoods = newGoods;
+        goodsList.erase(it);
+        goodsList[updateGoods.getName()] = updateGoods;
         return true;
     }
     return false;

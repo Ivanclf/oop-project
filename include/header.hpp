@@ -23,26 +23,16 @@ enum Category
     baby_care
 };
 
-typedef struct userData
-{
-    string username;
-    string password;
-    Role role;
-
-    userData() : username("unnamed"), password(""), role(Role::customer) {}
-    userData(string uname, string pwd, Role r) : username(uname), password(pwd), role(r) {}
-} userData;
-
 class User
 {
 private:
-    userData user_data;
-
+    string username;
+    string password;
+    Role role;
+    vector<Goods> cart;
 public:
     User();
-    User(string uname, string pwd, Role r);
-
-    userData getUserData() const;
+    User(string name, string pwd, Role r);
 
     string getUsername() const;
     void setUsername(const string &uname);
@@ -52,6 +42,10 @@ public:
 
     Role getRole() const;
     void setRole(Role r);
+
+    vector<Goods> getCart() const;
+    void pushCart(const Goods &cart);
+    void popCart();
 };
 
 class UserList
@@ -62,11 +56,11 @@ private:
 public:
     unordered_map<string, User> getUserList() const;
 
-    User *findUserByUsername(const string &username);
+    vector<User> findUserByUsername(const string &username) const;
 
     void iterateUsers() const;
 
-    vector<string> findUsersByRole(Role role) const;
+    vector<User> findUsersByRole(Role role) const;
 
     bool deleteUser(const string &username);
 
@@ -109,14 +103,14 @@ private:
 public:
     unordered_map<string, Goods> getGoodsList() const;
 
-    Goods *findGoodsByName(const string &name);
+    vector<Goods> findGoodsByName(const string &name) const;
 
     void iterateGoods() const;
 
-    vector<string> findGoodsByCategory(Category category) const;
-
+    template<typename T>
+    vector<Goods> findGoods(T value, int param) const;
+    
     bool deleteGoods(const string &name);
-
     bool addGoods(const string &name, const string &desc, Category category, double price, int storage);
     bool addGoods(Goods goods);
     bool updateGoods(const string &name, const Goods &newGoods);
@@ -125,13 +119,20 @@ public:
 void __init__();
 
 int loginController();
-
 void loginUser();
-
 User *registerUser();
 
 void adminController(User *user);
-
 void customerController(User *user);
+
+void changePassword(User *user);
+void listAllUsers();
+void updateUser();
+
+void listAllGoods();
+void addNewGoods();
+void updateGoods();
+void deleteGoods();
+void searchGoods();
 
 #endif

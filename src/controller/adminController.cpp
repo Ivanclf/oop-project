@@ -8,49 +8,47 @@ void adminController(User *user)
     int choice;
     while (true)
     {
-        cout << "\n0. exit\n1. Change password\n2. List all users\n3. Update a user's data\nChoose an option that you wanna do:\t";
+        cout << "\n0. Exit"
+             << "\n1. Change password"
+             << "\n2. List all users"
+             << "\n3. Update a user's data"
+             << "\n4. List all goods"
+             << "\n5. Add a new goods"
+             << "\n6. Update information of a goods"
+             << "\n7. Delete a kind of goods"
+             << "\n8. Find goods"
+             << "\nChoose an option that you want to perform:\t";
         cin >> choice;
         switch (choice)
         {
         case 0:
-        {
             cout << "have a nice day~\n";
             loginController();
-        }
+            break;
         case 1:
-        {
-            string newPassword;
-            cout << "Enter new password: ";
-            cin >> newPassword;
-            user->setPassword(newPassword);
-            cout << "Password updated successfully.\n";
-        }
-        break;
+            changePassword(user);
+            break;
         case 2:
-        {
-            cout << "List of all customer-level users:\n";
-            user_list->iterateUsers();
-        }
-        break;
+            listAllUsers();
+            break;
         case 3:
-        {
-            string usernameOld, usernameNew, password;
-            User *update;
-            cout << "Enter the username of the customer to update: ";
-            cin >> usernameOld;
-            if (user_list->findUserByUsername(usernameOld) == nullptr)
-            {
-                cout << "\n the user does not exist!";
-                break;
-            }
-            cout << "\n enter new username: ";
-            cin >> usernameNew;
-            cout << "\n enter new password: ";
-            cin >> password;
-            update = new User(usernameNew, password, customer);
-            user_list->updateUser(usernameOld, *update);
-        }
-        break;
+            updateUser();
+            break;
+        case 4:
+            listAllGoods();
+            break;
+        case 5:
+            addNewGoods();
+            break;
+        case 6:
+            updateGoods();
+            break;
+        case 7:
+            deleteGoods();
+            break;
+        case 8:
+            searchGoods();
+            break;
         default:
             cout << "Invalid choice. Please try again.\n";
             break;

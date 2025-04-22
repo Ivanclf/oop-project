@@ -1,34 +1,36 @@
 #include "../include/header.hpp"
 using namespace std;
 
-User::User() : user_data() {}
-User::User(string uname, string pwd, Role r) : user_data{uname, pwd, r} {}
+User::User() {}
+User::User(string name, string pwd, Role r) : username(name), password(pwd), role(r) {}
 
-userData User::getUserData() const { return user_data; }
+string User::getUsername() const { return username; }
 
-string User::getUsername() const { return user_data.username; }
+void User::setUsername(const string &name) { username = name; }
 
-void User::setUsername(const string &uname) { user_data.username = uname; }
+string User::getPassword() const { return password; }
 
-string User::getPassword() const { return user_data.password; }
+void User::setPassword(const string &pwd) { password = pwd; }
 
-void User::setPassword(const string &pwd) { user_data.password = pwd; }
+Role User::getRole() const { return role; }
 
-Role User::getRole() const { return user_data.role; }
+void User::setRole(Role r) { role = r; }
 
-void User::setRole(Role r) { user_data.role = r; }
+vector<Goods> User::getCart() const { return cart; }
 
+void User::pushCart(const Goods &goods) { cart.push_back(goods); }
+
+void User::popCart() { cart.pop_back(); }
 
 unordered_map<string, User> UserList::getUserList() const { return userList; }
 
-User* UserList::findUserByUsername(const string &username)
+vector<User> UserList::findUserByUsername(const string &username) const
 {
+    vector<User> result;
     auto it = userList.find(username);
     if (it != userList.end())
-    {
-        return &it->second;
-    }
-    return nullptr;
+        result.push_back(it->second);
+    return result;
 }
 
 void UserList::iterateUsers() const
@@ -39,14 +41,14 @@ void UserList::iterateUsers() const
     }
 }
 
-vector<string> UserList::findUsersByRole(Role role) const
+vector<User> UserList::findUsersByRole(Role role) const
 {
-    vector<string> result;
+    vector<User> result;
     for (const auto &pair : userList)
     {
         if (pair.second.getRole() == role)
         {
-            result.push_back(pair.first);
+            result.push_back(pair.second);
         }
     }
     return result;
@@ -84,7 +86,7 @@ bool UserList::updateUser(const string &username, const User &newUser)
     {
         User updatedUser = newUser;
         userList.erase(it);
-        userList[updatedUser.getUserData().username] = updatedUser;
+        userList[updatedUser.getUsername()] = updatedUser;
         return true;
     }
     return false;
