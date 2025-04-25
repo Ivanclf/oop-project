@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <vector>
 #include <algorithm>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -22,6 +23,8 @@ enum Category
     cloth,
     baby_care
 };
+
+class Goods;
 
 class User
 {
@@ -42,10 +45,6 @@ public:
 
     Role getRole() const;
     void setRole(Role r);
-
-    vector<Goods> getCart() const;
-    void pushCart(const Goods &cart);
-    void popCart();
 };
 
 class UserList
@@ -104,12 +103,11 @@ public:
     unordered_map<string, Goods> getGoodsList() const;
 
     vector<Goods> findGoodsByName(const string &name) const;
-
-    void iterateGoods() const;
-
-    template<typename T>
-    vector<Goods> findGoods(T value, int param) const;
-    
+    vector<Goods> findGoodsByDesc(const string &desc) const;
+    vector<Goods> findGoodsByCategory(Category category) const;
+    vector<Goods> findGoodsByPrice(double price) const;
+    vector<Goods> findGoodsByStorage(int storage) const;
+    void iterateGoods() const;    
     bool deleteGoods(const string &name);
     bool addGoods(const string &name, const string &desc, Category category, double price, int storage);
     bool addGoods(Goods goods);

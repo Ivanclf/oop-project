@@ -22,7 +22,7 @@ CATEGORY_INPUT:
     cout << "\n1. home"
          << "\n2. food"
          << "\n3. cloth"
-         << "\nbaby care"
+         << "\n4. baby care"
          << "\ncategory of this goods:\t";
     cin >> tmp;
     switch (tmp)
@@ -42,18 +42,14 @@ CATEGORY_INPUT:
     default:
         cout << "wrong input! Please input again:";
         goto CATEGORY_INPUT;
+        break;
     }
-    cin >> price;
     cout << "storage remain:\t";
     cin >> storage;
     if (goods_list->addGoods(name, desc, category, price, storage))
-    {
         cout << "\nadd goods success!";
-    }
     else
-    {
-        cout << "\n this kind odf goods has existed!";
-    }
+        cout << "\n this kind of goods has existed!";
 }
 
 void updateGoods()
@@ -83,7 +79,7 @@ CATEGORY_INPUT:
     cout << "\n1. home"
          << "\n2. food"
          << "\n3. cloth"
-         << "\nbaby care"
+         << "\n4. baby care"
          << "\nEnter new category: ";
     int tmp;
     cin >> tmp;
@@ -104,6 +100,7 @@ CATEGORY_INPUT:
     default:
         cout << "Wrong input! Please input again:";
         goto CATEGORY_INPUT;
+        break;
     }
     cout << "Enter new storage: ";
     cin >> storage;
@@ -119,13 +116,12 @@ void deleteGoods()
     string name;
     cout << "\nPlease input the name of goods:\t";
     cin >> name;
-    if (goods_list->findGoodsByName(name).empty())
+    if (goods_list->deleteGoods(name))
     {
-        cout << "goods does not find!";
+        cout << "delete success";
         return;
     }
-    goods_list->getGoodsList().erase(name);
-    cout << "delete success";
+    cout << "goods does not find!";
 }
 
 void searchGoods()
@@ -154,14 +150,14 @@ void searchGoods()
     case 1:
         cout << "enter the description:\t";
         cin >> str;
-        result = goods_list->findGoods(str, 1);
+        result = goods_list->findGoodsByDesc(str);
         break;
     case 2:
     CATEGORY_INPUT:
         cout << "\n1. home"
              << "\n2. food"
              << "\n3. cloth"
-             << "\nbaby care"
+             << "\n4. baby care"
              << "\nEnter the category:\t";
         int tmp;
         cin >> tmp;
@@ -182,21 +178,29 @@ void searchGoods()
         default:
             cout << "Wrong input! Please input again:";
             goto CATEGORY_INPUT;
+            break;
         }
-        result = goods_list->findGoods(category, 2);
+        result = goods_list->findGoodsByCategory(category);
         break;
     case 3:
         cout << "enter the price:\t";
         cin >> price;
-        result = goods_list->findGoods(price, 3);
+        result = goods_list->findGoodsByPrice(price);
         break;
     case 4:
         cout << "enter the storage:\t";
         cin >> store;
-        result = goods_list->findGoods(store, 4);
+        result = goods_list->findGoodsByStorage(store);
         break;
     default:
         cout << "enter a wrong code!";
         break;
     }
+    cout << "\nthe search result:";
+    for (auto it = result.begin(); it != result.end(); ++it)
+        cout << "\nname:\t" << (*it).getName()
+             << "\tdescription:\t" << (*it).getDesc()
+             << "\tprice:\t" << (*it).getPrice()
+             << "\tcategory:\t" << (*it).getCategory()
+             << "\tstorage:\t" << (*it).getStorage() << "\n";
 }

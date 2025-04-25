@@ -1,7 +1,7 @@
 #include "../include/header.hpp"
 using namespace std;
 
-User::User() {}
+User::User() : username(""), password(""), role(customer)  {}
 User::User(string name, string pwd, Role r) : username(name), password(pwd), role(r) {}
 
 string User::getUsername() const { return username; }
@@ -15,12 +15,6 @@ void User::setPassword(const string &pwd) { password = pwd; }
 Role User::getRole() const { return role; }
 
 void User::setRole(Role r) { role = r; }
-
-vector<Goods> User::getCart() const { return cart; }
-
-void User::pushCart(const Goods &goods) { cart.push_back(goods); }
-
-void User::popCart() { cart.pop_back(); }
 
 unordered_map<string, User> UserList::getUserList() const { return userList; }
 

@@ -30,7 +30,7 @@ int loginController()
             break;
         case 3:
             cout << "Exiting program. Goodbye!\n";
-            return 0;
+            exit(0);
         default:
             cout << "Invalid choice. Please try again.\n";
         }
@@ -45,14 +45,14 @@ void loginUser()
     cout << "Enter password: ";
     cin >> password;
 
-
-    if (user_list->findUserByUsername(username) == nullptr)
+    auto users = user_list->findUserByUsername(username);
+    if (users.empty())
     {
         cout << "User not found. Please register first.\n";
         return;
     }
 
-    User *user = user_list->findUserByUsername(username);
+    User *user = &users[0];
     if (user != nullptr && user->getPassword() == password)
     {
         cout << "Login successful! Welcome, " << (user->getRole() == admin ? "Admin" : "Customer") << " " << user->getUsername() << ".\n";
@@ -79,7 +79,7 @@ User *registerUser()
         return nullptr;
     }
 
-    if (user_list->findUserByUsername(username) != nullptr)
+    if (!user_list->findUserByUsername(username).empty())
     {
         cout << "Username already exists. Please try again.\n";
         return nullptr;

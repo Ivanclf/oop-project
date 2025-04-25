@@ -48,39 +48,66 @@ void GoodsList::iterateGoods() const
     for (const auto &pair : goodsList)
     {
         cout << "Name: " << pair.first
-             << "Descripsion: " << pair.second.getDesc()
-             << ", Category: " << pair.second.getCategory()
-             << ", Price: " << pair.second.getPrice()
-             << ", Storage: " << pair.second.getStorage() << "\n";
+             << "\tDescripsion: " << pair.second.getDesc()
+             << ",\tCategory: " << pair.second.getCategory()
+             << ",\tPrice: " << pair.second.getPrice()
+             << ",\tStorage: " << pair.second.getStorage() << "\n";
     }
+    getchar();
+    cout << "press any key to continue\n";
+    getchar();
 }
 
-template <typename T>
-vector<Goods> GoodsList::findGoods(T value, int param) const
+vector<Goods> GoodsList::findGoodsByDesc(const string &desc) const
 {
     vector<Goods> result;
-    switch (param)
+    for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
     {
-    case 1: // desc
-        for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
-            if (*it->second.getDesc() == value)
-                result.push_back(*it);
-        break;
-    case 2: // category
-        for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
-            if (*it->second.getCategory() == value)
-                result.push_back(*it);
-    case 3: // price
-        for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
-            if (*it->second.getPrice() == value)
-                result.push_back(*it);
-    case 4: // storage
-        for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
-            if (*ir->second.getStorage() == value)
-                result.push_back(*it);
-    default:
-        break;
+        if (it->second.getDesc() == desc)
+        {
+            result.push_back(it->second);
+        }
     }
+    return result;
+}
+
+vector<Goods> GoodsList::findGoodsByCategory(Category category) const
+{
+    vector<Goods> result;
+    for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
+    {
+        if (it->second.getCategory() == category)
+        {
+            result.push_back(it->second);
+        }
+    }
+    return result;
+}
+
+vector<Goods> GoodsList::findGoodsByPrice(double price) const
+{
+    vector<Goods> result;
+    for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
+    {
+        if (it->second.getPrice() == price)
+        {
+            result.push_back(it->second);
+        }
+    }
+    return result;
+}
+
+vector<Goods> GoodsList::findGoodsByStorage(int storage) const
+{
+    vector<Goods> result;
+    for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
+    {
+        if (it->second.getStorage() == storage)
+        {
+            result.push_back(it->second);
+        }
+    }
+    return result;
 }
 
 bool GoodsList::deleteGoods(const string &name)
