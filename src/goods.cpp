@@ -26,9 +26,6 @@ int Goods::getStorage() const { return storage; }
 
 void Goods::setStorage(int storage) { this->storage = storage; }
 
-#include "../include/header.hpp"
-using namespace std;
-
 unordered_map<string, Goods> GoodsList::getGoodsList() const
 {
     return goodsList;
@@ -143,6 +140,17 @@ bool GoodsList::updateGoods(const string &name, const Goods &newGoods)
         Goods updateGoods = newGoods;
         goodsList.erase(it);
         goodsList[updateGoods.getName()] = updateGoods;
+        return true;
+    }
+    return false;
+}
+
+bool GoodsList::setStorage(const string &name, int decline)
+{
+    auto it = goodsList.find(name);
+    if(it != goodsList.end())
+    {
+        it->second.setStorage(it->second.getStorage() - decline);
         return true;
     }
     return false;

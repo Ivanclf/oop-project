@@ -24,11 +24,12 @@ void customerController(User *user)
         case 2:
             listAllGoods();
             break;
+        case 3:
+            searchGoods();
+            break;
         default:
-        {
             cout << "you have pressed a wrong number, please press again!\n";
             continue;
-        }
         }
     }
 }

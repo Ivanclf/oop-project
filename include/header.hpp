@@ -24,7 +24,55 @@ enum Category
     baby_care
 };
 
-class Goods;
+typedef struct ITEM {
+    Goods item;
+    int quantity;
+
+    ITEM(Goods item, int quantity) : item(item), quantity(quantity) {}
+    ITEM() : item({}), quantity(0){}
+} Item;
+
+class Goods
+{
+private:
+    string name;
+    string desc;
+    Category category;
+    double price;
+    int storage;
+
+public:
+    Goods();
+    Goods(const string &name, const string &desc, Category category, double price, int storage);
+
+    string getName() const;
+    void setName(const string &name);
+
+    string getDesc() const;
+    void setDesc(const string &desc);
+
+    Category getCategory() const;
+    void setCategory(Category category);
+
+    double getPrice() const;
+    void setPrice(double price);
+
+    int getStorage() const;
+    void setStorage(int storage);
+};
+
+class cart
+{
+private:
+    vector<Item> cart;
+public:
+    void iterateGoods() const;
+    Item getItem(const int order);
+    void addItem(Goods *item);
+    bool deleteItem(const int order);
+    bool changeQuantity(Item item, const int quantity);
+    int getSize() const;
+};
 
 class User
 {
@@ -32,7 +80,8 @@ private:
     string username;
     string password;
     Role role;
-    vector<Goods> cart;
+    cart userCart;
+
 public:
     User();
     User(string name, string pwd, Role r);
@@ -45,6 +94,8 @@ public:
 
     Role getRole() const;
     void setRole(Role r);
+
+    cart getCart();
 };
 
 class UserList
@@ -68,37 +119,11 @@ public:
     bool updateUser(const string &username, const User &newUser);
 };
 
-class Goods
+class GoodsList
 {
 private:
-    string name;
-    string desc;
-    Category category;
-    double price;
-    int storage;
-public:
-    Goods();
-    Goods(const string &name, const string &desc, Category category, double price, int storage);
-
-    string getName() const;
-    void setName(const string &name);
-
-    string getDesc() const;
-    void setDesc(const string &desc);
-
-    Category getCategory() const;
-    void setCategory(Category category);
-
-    double getPrice() const;
-    void setPrice(double price);
-
-    int getStorage() const;
-    void setStorage(int storage);
-};
-
-class GoodsList {
-private:
     unordered_map<string, Goods> goodsList;
+
 public:
     unordered_map<string, Goods> getGoodsList() const;
 
@@ -107,7 +132,8 @@ public:
     vector<Goods> findGoodsByCategory(Category category) const;
     vector<Goods> findGoodsByPrice(double price) const;
     vector<Goods> findGoodsByStorage(int storage) const;
-    void iterateGoods() const;    
+    bool setStorage(const string &name, int decline);
+    void iterateGoods() const;
     bool deleteGoods(const string &name);
     bool addGoods(const string &name, const string &desc, Category category, double price, int storage);
     bool addGoods(Goods goods);
@@ -122,6 +148,7 @@ User *registerUser();
 
 void adminController(User *user);
 void customerController(User *user);
+void cartController(cart userCart);
 
 void changePassword(User *user);
 void listAllUsers();

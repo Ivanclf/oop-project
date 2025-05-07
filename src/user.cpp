@@ -16,6 +16,8 @@ Role User::getRole() const { return role; }
 
 void User::setRole(Role r) { role = r; }
 
+cart User::getCart() { return userCart; }
+
 unordered_map<string, User> UserList::getUserList() const { return userList; }
 
 vector<User> UserList::findUserByUsername(const string &username) const

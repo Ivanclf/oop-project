@@ -63,7 +63,7 @@ void updateGoods()
 
     cout << "Enter the name of the goods to update: ";
     cin >> goodsNameOld;
-    if (goods_list->findGoodsByName(goodsNameNew).empty())
+    if (goods_list->findGoodsByName(goodsNameOld).empty())
     {
         cout << "\nthis goods does not exist!";
         return;
