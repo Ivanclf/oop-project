@@ -3,7 +3,7 @@
 extern UserList *user_list;
 using namespace std;
 
-void adminController(User *user)
+void adminController(User &user)
 {
     int choice;
     while (true)
@@ -35,7 +35,7 @@ void adminController(User *user)
             updateUser();
             break;
         case 4:
-            listAllGoods();
+            listAllGoods(user);
             break;
         case 5:
             addNewGoods();

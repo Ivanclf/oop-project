@@ -4,7 +4,19 @@ using namespace std;
 extern UserList *user_list;
 extern GoodsList *goods_list;
 
-void listAllGoods() { goods_list->iterateGoods(); }
+void listAllGoods(User &user)
+{
+    char option;
+    auto cart = &(user.getCart());
+    goods_list->iterateGoods();
+    if(user.getRole() == customer)
+    {
+        cout << "\nNeed to add something?(1 for yes, else for no): ";
+        cin >> option;
+        if(option == '1')
+            addNew(*cart);
+    }
+}
 
 void addNewGoods()
 {

@@ -24,14 +24,6 @@ enum Category
     baby_care
 };
 
-typedef struct ITEM {
-    Goods item;
-    int quantity;
-
-    ITEM(Goods item, int quantity) : item(item), quantity(quantity) {}
-    ITEM() : item({}), quantity(0){}
-} Item;
-
 class Goods
 {
 private:
@@ -61,16 +53,26 @@ public:
     void setStorage(int storage);
 };
 
-class cart
+typedef struct ITEM {
+    Goods item;
+    int quantity;
+
+    ITEM(Goods item, int quantity) : item(item), quantity(quantity) {}
+    ITEM(Goods *goods, int quantity) : item(*goods), quantity(quantity) {}
+    ITEM() : item({}), quantity(0){}
+} Item;
+
+class Cart
 {
 private:
-    vector<Item> cart;
+    vector<Item> items;
 public:
     void iterateGoods() const;
-    Item getItem(const int order);
-    void addItem(Goods *item);
+    Item &getItem(const int order);
+    void addItem(Goods *goods);
+    void addItem(Item &item);
     bool deleteItem(const int order);
-    bool changeQuantity(Item item, const int quantity);
+    bool changeQuantity(Item &item, const int quantity);
     int getSize() const;
 };
 
@@ -80,7 +82,7 @@ private:
     string username;
     string password;
     Role role;
-    cart userCart;
+    Cart userCart;
 
 public:
     User();
@@ -95,7 +97,7 @@ public:
     Role getRole() const;
     void setRole(Role r);
 
-    cart getCart();
+    Cart &getCart();
 };
 
 class UserList
@@ -144,17 +146,19 @@ void __init__();
 
 int loginController();
 void loginUser();
-User *registerUser();
+User registerUser();
 
-void adminController(User *user);
-void customerController(User *user);
-void cartController(cart userCart);
+void adminController(User &user);
+void customerController(User &user);
 
-void changePassword(User *user);
+void cartController(Cart &userCart);
+void addNew(Cart &userCart);
+
+void changePassword(User &user);
 void listAllUsers();
 void updateUser();
 
-void listAllGoods();
+void listAllGoods(User &user);
 void addNewGoods();
 void updateGoods();
 void deleteGoods();

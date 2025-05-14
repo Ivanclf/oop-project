@@ -3,7 +3,7 @@ extern UserList *user_list;
 using namespace std;
 
 void loginUser();
-User* registerUser();
+User registerUser();
 
 int loginController()
 {
@@ -13,14 +13,14 @@ int loginController()
         cout << "\n1. Register\n2. Login\n3. Exit\nChoose an option: ";
         cin >> choice;
 
-        User *user;
+        User user;
         switch (choice)
         {
         case 1:
             user = registerUser();
-            if(user == nullptr)
+            if(user.getUsername().empty())
                 break;
-            else if (user->getRole() == admin)
+            else if (user.getRole() == admin)
                 adminController(user);
             else
                 customerController(user);
@@ -52,17 +52,17 @@ void loginUser()
         return;
     }
 
-    User *user = &users[0];
-    if (user != nullptr && user->getPassword() == password)
+    User user = users[0];
+    if (!user.getUsername().empty() && user.getPassword() == password)
     {
-        cout << "Login successful! Welcome, " << (user->getRole() == admin ? "Admin" : "Customer") << " " << user->getUsername() << ".\n";
-        user->getRole() == admin ? adminController(user) : customerController(user);
+        cout << "Login successful! Welcome, " << (user.getRole() == admin ? "Admin" : "Customer") << " " << user.getUsername() << ".\n";
+        user.getRole() == admin ? adminController(user) : customerController(user);
     }
     else
         cout << "Incorrect username or password. Please try again.\n";
 }
 
-User *registerUser()
+User registerUser()
 {
     string username, password;
     int role;
@@ -76,16 +76,16 @@ User *registerUser()
     if (role != 0 && role != 1)
     {
         cout << "Invalid role. Please choose 'admin' or 'customer'.\n";
-        return nullptr;
+        return {};
     }
 
     if (!user_list->findUserByUsername(username).empty())
     {
         cout << "Username already exists. Please try again.\n";
-        return nullptr;
+        return {};
     }
-    User *user = new User(username, password, static_cast<Role>(role));
-    user_list->addUser(*user);
+    User user = User(username, password, static_cast<Role>(role));
+    user_list->addUser(user);
     cout << "Registration successful!\n";
     return user;
 }

@@ -2,59 +2,76 @@
 using namespace std;
 extern GoodsList *goods_list;
 
-void cart::iterateGoods() const
+void Cart::iterateGoods() const
 {
     int count = 1;
-    for (const auto &it : cart)
+    double total = 0;
+    if (items.empty())
     {
-        cout << ++count << ": Name: " << it.item.getName()
-             << "\tDescripsion: " << it.item.getDesc()
-             << "\tPrice" << it.item.getPrice() << "\n";
-        getchar();
-        cout << "Press any key to continue\n";
-        getchar();
+        cout << "\nOops! the cart is empty, go and find something fine!";
+        return;
     }
-}
-
-Item cart::getItem(const int order)
-{
-    if (order <= 0 || order > cart.size())
-        return {};
-    return cart[order - 1];
-}
-
-void cart::addItem(Goods *item)
-{
-    for (auto &it : cart)
+    for (const auto &it : items)
     {
-        if (it.item.getName() == item->getName())
+        cout << count++ << ": Name: " << it.item.getName()
+             << "\tDescripsion: " << it.item.getDesc()
+             << "\tPrice: " << it.item.getPrice()
+             << "\tquantity: " << it.quantity << "\n";
+        total += it.item.getPrice() * it.quantity;
+    }
+    cout << "total price: " << total;
+
+    getchar();
+    cout << "\nPress any key to continue";
+    getchar();
+}
+
+Item &Cart::getItem(const int order) { return items[order - 1]; }
+
+void Cart::addItem(Goods *goods)
+{
+    for (auto &it : this->items)
+    {
+        if (it.item.getName() == goods->getName())
         {
             it.quantity++;
             return;
         }
     }
-    cart.push_back(Item(*item, 1));
+    this->items.push_back(Item(*goods, 1));
 }
 
-bool cart::deleteItem(const int order)
+void Cart::addItem(Item &item)
 {
-    if (order <= 0 || order > cart.size())
+    for (auto &it : items)
+    {
+        if (it.item.getName() == item.item.getName())
+        {
+            it.quantity++;
+            return;
+        }
+    }
+    items.push_back(item);
+}
+
+bool Cart::deleteItem(const int order)
+{
+    if (order <= 0 || (long unsigned int)order > items.size())
         return false;
-    cart.erase(cart.begin() + (order - 1));
+    items.erase(items.begin() + (order - 1));
     return true;
 }
 
-bool cart::changeQuantity(Item item, const int quantity)
+bool Cart::changeQuantity(Item &item, const int quantity)
 {
-    if(item.item.getStorage() < quantity)
+    if (item.item.getStorage() < quantity)
         return false;
-    else 
+    else
     {
         item.quantity = quantity;
         goods_list->setStorage(item.item.getName(), quantity);
     }
     return true;
-        
 }
 
-int cart::getSize() const { return cart.size(); }
+int Cart::getSize() const { return items.size(); }

@@ -3,12 +3,12 @@ using namespace std;
 
 extern UserList *user_list;
 
-void changePassword(User *user)
+void changePassword(User &user)
 {
     string newPassword;
     cout << "Enter new password: ";
     cin >> newPassword;
-    user->setPassword(newPassword);
+    user.setPassword(newPassword);
     cout << "Password updated successfully.\n";
 }
 

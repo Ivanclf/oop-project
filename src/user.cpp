@@ -16,7 +16,7 @@ Role User::getRole() const { return role; }
 
 void User::setRole(Role r) { role = r; }
 
-cart User::getCart() { return userCart; }
+Cart &User::getCart() { return userCart; }
 
 unordered_map<string, User> UserList::getUserList() const { return userList; }
 
@@ -32,9 +32,7 @@ vector<User> UserList::findUserByUsername(const string &username) const
 void UserList::iterateUsers() const
 {
     for (const auto &pair : userList)
-    {
         cout << "Username: " << pair.first << ", Role: " << (pair.second.getRole() == admin ? "Admin" : "Customer") << endl;
-    }
 }
 
 vector<User> UserList::findUsersByRole(Role role) const

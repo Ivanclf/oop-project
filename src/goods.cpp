@@ -50,9 +50,6 @@ void GoodsList::iterateGoods() const
              << ",\tPrice: " << pair.second.getPrice()
              << ",\tStorage: " << pair.second.getStorage() << "\n";
     }
-    getchar();
-    cout << "press any key to continue\n";
-    getchar();
 }
 
 vector<Goods> GoodsList::findGoodsByDesc(const string &desc) const

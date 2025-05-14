@@ -7,6 +7,7 @@ void __init__()
     user_list->addUser(*(new User("admin", "123456", admin)));
     user_list->addUser(*(new User("xiaoming", "123456", customer)));
     user_list->addUser(*(new User("haohao", "88888888", customer)));
+    user_list->addUser(*(new User("d", "2", customer)));
 
     goods_list->addGoods(*(new Goods("eggs", "the cheapest!", food, 9.99, 50)));
     goods_list->addGoods(*(new Goods("shampoo", "keep your hair clean!", home, 25, 200)));
