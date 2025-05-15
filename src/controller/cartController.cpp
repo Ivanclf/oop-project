@@ -3,7 +3,7 @@ using namespace std;
 
 extern GoodsList *goods_list;
 
-void cartController(Cart &userCart)
+void cartController(Cart &userCart, Order &orders)
 {
     int choice, option = 0, quantity = 0;
     bool temp = false;
@@ -14,6 +14,8 @@ void cartController(Cart &userCart)
         cout << "\n\n0. Exit"
              << "\n1. Delete a item"
              << "\n2. Change the quantity of an item"
+             << "\n3. Add all items in cart to order"
+             << "\n4. Add a single item in cart to order"
              << "\nChoose an option that you wanna do:\t";
         cin >> choice;
         auto item = &(userCart.getItem(option));
@@ -57,6 +59,24 @@ void cartController(Cart &userCart)
             }
             else
                 cout << "change failed! check if the storage is enough!";
+            break;
+        case 3: 
+            if (userCart.getSize() == 0) {
+                cout << "Cart is empty, nothing to add.\n";
+                break;
+            }
+            orders.addItem(userCart.getItems()); 
+            cout << "All items in cart have been added to your order.\n";
+            break;
+        case 4: 
+            cout << "Input the order number of the item to add to order: ";
+            cin >> option;
+            if (option <= 0 || option > userCart.getSize()) {
+                cout << "Invalid order number.\n";
+                break;
+            }
+            orders.addItem(userCart.getItem(option));
+            cout << "Item has been added to your order.\n";
             break;
         default:
             cout << "you have pressed a wrong number, please press again!\n";

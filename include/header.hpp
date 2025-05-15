@@ -7,6 +7,8 @@
 #include <vector>
 #include <algorithm>
 #include <stdlib.h>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -22,6 +24,15 @@ enum Category
     food,
     cloth,
     baby_care
+};
+
+enum order_status
+{
+    undefined,
+    unpayed,
+    not_deliverd,
+    deliverd,
+    checked
 };
 
 class Goods
@@ -53,13 +64,17 @@ public:
     void setStorage(int storage);
 };
 
-typedef struct ITEM {
+typedef struct ITEM
+{
     Goods item;
     int quantity;
+    order_status status;
 
-    ITEM(Goods item, int quantity) : item(item), quantity(quantity) {}
-    ITEM(Goods *goods, int quantity) : item(*goods), quantity(quantity) {}
-    ITEM() : item({}), quantity(0){}
+    ITEM(Goods item, int quantity) : item(item), quantity(quantity), status(undefined) {}
+    ITEM(Goods *goods, int quantity) : item(*goods), quantity(quantity), status(undefined) {}
+    ITEM(Goods item, int quantity, order_status status) : item(item), quantity(quantity), status(status) {}
+    ITEM(Goods *goods, int quantity, order_status status) : item(*goods), quantity(quantity), status(status) {}
+    ITEM() : item({}), quantity(0), status(undefined) {}
 } Item;
 
 class Cart
@@ -69,11 +84,34 @@ private:
 public:
     void iterateGoods() const;
     Item &getItem(const int order);
+    vector<Item> &getItems();
     void addItem(Goods *goods);
     void addItem(Item &item);
     bool deleteItem(const int order);
     bool changeQuantity(Item &item, const int quantity);
     int getSize() const;
+};
+
+class Order
+{
+private:
+    vector<Item> orderList;
+    
+    void autoChangeStatus();
+    void changeStorage();
+public:
+    Order();
+    Order(const vector<Item> &items);
+    vector<Item> getItems() const;
+    void sortByName();
+    static void sortByStatus(vector<Order> &orders);
+    void printAllItems() const;
+    void printItemsByStatus(order_status filterStatus) const;
+    void addItem(const Item &item);
+    void addItem(const vector<Item> &itemList);
+    bool deleteItem(const string &itemName);
+    bool setItemStatus(const string &itemName, order_status newStatus);
+    order_status getItemStatus(const string &itemName) const;
 };
 
 class User
@@ -83,6 +121,7 @@ private:
     string password;
     Role role;
     Cart userCart;
+    Order orders;
 
 public:
     User();
@@ -98,6 +137,8 @@ public:
     void setRole(Role r);
 
     Cart &getCart();
+
+    Order &getUserOrder();
 };
 
 class UserList
@@ -151,7 +192,7 @@ User registerUser();
 void adminController(User &user);
 void customerController(User &user);
 
-void cartController(Cart &userCart);
+void cartController(Cart &userCart, Order &orders);
 void addNew(Cart &userCart);
 
 void changePassword(User &user);
@@ -163,5 +204,7 @@ void addNewGoods();
 void updateGoods();
 void deleteGoods();
 void searchGoods();
+
+void orderController(Order &orders); 
 
 #endif

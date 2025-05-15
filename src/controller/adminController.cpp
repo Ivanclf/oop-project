@@ -17,6 +17,7 @@ void adminController(User &user)
              << "\n6. Update information of a goods"
              << "\n7. Delete a kind of goods"
              << "\n8. Find goods"
+             << "\n9. Manage user order status"
              << "\nChoose an option that you want to perform:\t";
         cin >> choice;
         switch (choice)
@@ -49,6 +50,32 @@ void adminController(User &user)
         case 8:
             searchGoods();
             break;
+        case 9:
+        {
+            string uname;
+            cout << "Input the username: ";
+            cin >> uname;
+            auto users = user_list->findUserByUsername(uname);
+            if (users.empty()) {
+                cout << "User not found.\n";
+                break;
+            }
+            User &targetUser = user_list->getUserList().at(uname);
+            Order &orders = targetUser.getUserOrder();
+            cout << "User's orders:\n";
+            orders.printAllItems();
+            string itemName;
+            cout << "Input the item name you want to change status: ";
+            cin >> itemName;
+            cout << "Input new status (0-undefined, 1-unpayed, 2-not_deliverd, 3-deliverd, 4-checked): ";
+            int statusInt;
+            cin >> statusInt;
+            if (orders.setItemStatus(itemName, static_cast<order_status>(statusInt)))
+                cout << "Order status updated.\n";
+            else
+                cout << "Failed to update order status. Check item name.\n";
+            break;
+        }
         default:
             cout << "Invalid choice. Please try again.\n";
             break;

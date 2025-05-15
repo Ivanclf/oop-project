@@ -28,6 +28,8 @@ void Cart::iterateGoods() const
 
 Item &Cart::getItem(const int order) { return items[order - 1]; }
 
+vector<Item> &Cart::getItems() { return items; }
+
 void Cart::addItem(Goods *goods)
 {
     for (auto &it : this->items)
@@ -67,10 +69,7 @@ bool Cart::changeQuantity(Item &item, const int quantity)
     if (item.item.getStorage() < quantity)
         return false;
     else
-    {
         item.quantity = quantity;
-        goods_list->setStorage(item.item.getName(), quantity);
-    }
     return true;
 }
 
