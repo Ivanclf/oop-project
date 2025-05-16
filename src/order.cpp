@@ -3,160 +3,76 @@ using namespace std;
 
 extern GoodsList *goods_list;
 
-Order::Order() {}
-Order::Order(const vector<Item> &items) : orderList(items) {}
+vector<Item> &Order::getItems() { return orderList; }
 
-vector<Item> Order::getItems() const
-{
-    return orderList;
-}
-
-void Order::sortByName()
-{
+void Order::sortByName() {
     sort(orderList.begin(), orderList.end(), [](const Item &a, const Item &b) {
-        return a.item.getName() < b.item.getName();
+        return a.goods->getName() < b.goods->getName();
     });
 }
 
-void Order::sortByStatus(vector<Order> &orders)
-{
-    sort(orders.begin(), orders.end(), [](const Order &a, const Order &b) {
-        return a.getItems().size() < b.getItems().size(); 
+void Order::sortByStatus() {
+    sort(orderList.begin(), orderList.end(), [](const Item &a, const Item &b) {
+        return a.status < b.status;
     });
 }
 
-void Order::printAllItems() const
-{
-    for (const auto &item : orderList)
-    {
-        cout << "Name: " << item.item.getName()
-             << ", Quantity: " << item.quantity
-             << ", Status: " << item.status << endl;
+void Order::iterateGoods() const {
+    if(orderList.empty()) {
+        cout << "No items in the order.\n";
+        return;
     }
-}
-
-void Order::printItemsByStatus(order_status filterStatus) const
-{
-    for (const auto &item : orderList)
-    {
-        if (item.status == filterStatus)
-        {
-            cout << "Name: " << item.item.getName()
+    cout << "\nList of all items in your order:\n";
+    for (const auto &item : orderList) {
+        if (item.goods) {
+            cout << "Name: " << item.goods->getName()
                  << ", Quantity: " << item.quantity
-                 << ", Status: " << item.status << endl;
+                 << ", Status: " << printStatus(item.status) << '\n';
         }
     }
 }
 
-void Order::addItem(const Item &item)
-{
-    for (auto &it : orderList)
-    {
-        if (it.item.getName() == item.item.getName())
-        {
-            int maxQuantity = it.item.getStorage(); 
-            if (it.quantity + item.quantity > maxQuantity)
-            {
-                it.quantity = maxQuantity; 
-                cout << "Quantity for item \"" << it.item.getName() << "\" adjusted to maximum storage: " << maxQuantity << endl;
-            }
-            else
-            {
-                it.quantity += item.quantity; 
-            }
+void Order::iterateGoodsByStatus(order_status filterStatus) const {
+    for (const auto &item : orderList) {
+        if (item.status == filterStatus && item.goods) {
+            cout << "Name: " << item.goods->getName()
+                 << ", Quantity: " << item.quantity
+                 << ", Status: " << printStatus(item.status) << '\n';
+        }
+    }
+}
 
-            
-            if (it.status == unpayed)
-            {
-                cout << "Item \"" << it.item.getName() << "\" is unpayed. Triggering autoChangeStatus...\n";
+void Order::addItem(string &name, int quantity, order_status status) {
+    if (quantity <= 0)
+        return;
+    auto it = goods_list->findGoodsByName(name);
+    if (it.empty()) {
+        cout << "Goods not found: " << name << endl;
+        return;
+    }
+
+    Goods* goodsPtr = it.back();
+    for (auto &item : orderList) {
+        if (item.goods && item.goods->getName() == name) {
+            if(item.quantity + quantity > goodsPtr->getStorage()) {
+                cout << "Not enough storage for " << name  << "\ntake the maximum" << endl;
+                item.quantity = goodsPtr->getStorage();
+                goodsPtr->setStorage(0);
                 autoChangeStatus();
+                return;
             }
+            item.quantity += quantity;
+            item.status = status;
+            goodsPtr->setStorage(goodsPtr->getStorage() - quantity);
+            autoChangeStatus();
             return;
         }
     }
-
-    
-    if (item.quantity > item.item.getStorage())
-    {
-        Item newItem = item;
-        newItem.quantity = item.item.getStorage(); 
-        cout << "Quantity for new item \"" << newItem.item.getName() << "\" adjusted to maximum storage: " << newItem.quantity << endl;
-        orderList.push_back(newItem);
-    }
-    else
-    {
-        orderList.push_back(item);
-    }
-
-    
-    if (item.status == unpayed)
-    {
-        cout << "Item \"" << item.item.getName() << "\" is unpayed. Triggering autoChangeStatus...\n";
-        autoChangeStatus();
-    }
+    orderList.emplace_back(goodsPtr, quantity, status);
 }
-
-void Order::addItem(const vector<Item> &itemList)
-{
-    for (const auto &newItem : itemList)
-    {
-        bool found = false;
-        for (auto &existingItem : orderList)
-        {
-            if (existingItem.item.getName() == newItem.item.getName())
-            {
-                int maxQuantity = existingItem.item.getStorage(); 
-                if (existingItem.quantity + newItem.quantity > maxQuantity)
-                {
-                    existingItem.quantity = maxQuantity; 
-                    cout << "Quantity for item \"" << existingItem.item.getName() << "\" adjusted to maximum storage: " << maxQuantity << endl;
-                }
-                else
-                {
-                    existingItem.quantity += newItem.quantity; 
-                }
-
-                
-                if (existingItem.status == unpayed)
-                {
-                    cout << "Item \"" << existingItem.item.getName() << "\" is unpayed. Triggering autoChangeStatus...\n";
-                    autoChangeStatus();
-                }
-                found = true;
-                break;
-            }
-        }
-        if (!found)
-        {
-            
-            if (newItem.quantity > newItem.item.getStorage())
-            {
-                Item adjustedItem = newItem;
-                adjustedItem.quantity = newItem.item.getStorage(); 
-                cout << "Quantity for new item \"" << adjustedItem.item.getName() << "\" adjusted to maximum storage: " << adjustedItem.quantity << endl;
-                orderList.push_back(adjustedItem);
-            }
-            else
-            {
-                orderList.push_back(newItem);
-            }
-
-            
-            if (newItem.status == unpayed)
-            {
-                cout << "Item \"" << newItem.item.getName() << "\" is unpayed. Triggering autoChangeStatus...\n";
-                autoChangeStatus();
-            }
-        }
-    }
-}
-
-bool Order::deleteItem(const string &itemName)
-{
-    for (auto it = orderList.begin(); it != orderList.end(); ++it)
-    {
-        if (it->item.getName() == itemName)
-        {
+bool Order::deleteItem(string &name) {
+    for (auto it = orderList.begin(); it != orderList.end(); ++it) {
+        if (it->goods && it->goods->getName() == name) {
             orderList.erase(it);
             return true;
         }
@@ -164,71 +80,68 @@ bool Order::deleteItem(const string &itemName)
     return false;
 }
 
-bool Order::setItemStatus(const string &itemName, order_status newStatus)
-{
-    for (auto &it : orderList)
-    {
-        if (it.item.getName() == itemName)
-        {
-            it.status = newStatus;
+bool Order::setItemStatus(const string &itemName, order_status newStatus) {
+    for (auto &item : orderList) {
+        if (item.goods && item.goods->getName() == itemName) {
+            item.status = newStatus;
             return true;
         }
     }
     return false;
 }
 
-order_status Order::getItemStatus(const string &itemName) const
-{
-    for (const auto &it : orderList)
-    {
-        if (it.item.getName() == itemName)
-        {
-            return it.status;
+order_status &Order::getItemStatus(string &itemName) {
+    for (auto &item : orderList) {
+        if (item.goods && item.goods->getName() == itemName) {
+            return item.status;
         }
     }
-    return undefined; 
+    static order_status invalid_status = undefined;
+    return invalid_status;
 }
 
-void Order::autoChangeStatus()
-{
-    for (auto &item : orderList)
-    {
-        if (item.status == unpayed)
-        {
-            cout << "Order item \"" << item.item.getName() << "\" is currently unpayed. Changing status...\n";
-
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-            item.status = not_deliverd;
-            cout << "Order item \"" << item.item.getName() << "\" status changed to not_deliverd.\n";
-
-            std::this_thread::sleep_for(std::chrono::seconds(5));
-            item.status = deliverd;
-            cout << "Order item \"" << item.item.getName() << "\" status changed to deliverd.\n";
+void Order::autoChangeStatus() {
+    for (auto &item : orderList) {
+        if (item.status == unpayed) {
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            item.status = not_delivered;
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            item.status = delivered;
         }
     }
 }
 
-void Order::changeStorage()
-{
-    for (auto &item : orderList)
-    {
-        if (item.status == not_deliverd) 
-        {
-            auto it = goods_list->getGoodsList().find(item.item.getName());
-            if (it != goods_list->getGoodsList().end()) 
-            {
-                Goods &goods = it->second;
-                int currentStorage = goods.getStorage();
-                if (currentStorage >= item.quantity)
-                {
-                    goods.setStorage(currentStorage - item.quantity); 
-                    cout << "Storage updated for item \"" << goods.getName() << "\". New storage: " << goods.getStorage() << endl;
-                }
-                else
-                    cout << "Insufficient storage for item \"" << goods.getName() << "\". Cannot fulfill the order.\n";
+void Order::changeStorage() {
+    for (auto &item : orderList) {
+        if (item.status == not_delivered && item.goods) {
+            int currentStorage = item.goods->getStorage();
+            if (currentStorage >= item.quantity) {
+                item.goods->setStorage(currentStorage - item.quantity);
             }
-            else
-                cout << "Item \"" << item.item.getName() << "\" not found in goods list.\n";
         }
     }
+}
+
+string &Order::printStatus(order_status status) const {
+    static string statusStr;
+    switch (status) {
+        case undefined:
+            statusStr = "Undefined";
+            break;
+        case unpayed:
+            statusStr = "Unpayed";
+            break;
+        case not_delivered:
+            statusStr = "Not Delivered";
+            break;
+        case delivered:
+            statusStr = "Delivered";
+            break;
+        case checked:
+            statusStr = "Checked";
+            break;
+        default:
+            statusStr = "Unknown Status";
+    }
+    return statusStr;
 }

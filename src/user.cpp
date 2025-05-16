@@ -1,8 +1,10 @@
 #include "../include/header.hpp"
 using namespace std;
 
-User::User() : username(""), password(""), role(customer), userCart(), orders()  {}
+User::User() : username(""), password(""), role(customer), userCart(), orders() {}
 User::User(string name, string pwd, Role r) : username(name), password(pwd), role(r) {}
+
+User::User(string name, string pwd, Role r, Cart cart, Order order) : username(name), password(pwd), role(r), userCart(cart), orders(order) {}
 
 string User::getUsername() const { return username; }
 
@@ -22,19 +24,36 @@ Order &User::getUserOrder() { return orders; }
 
 unordered_map<string, User> UserList::getUserList() const { return userList; }
 
-vector<User> UserList::findUserByUsername(const string &username) const
+vector<User*> UserList::findUserByUsername(const string &username) const
 {
-    vector<User> result;
+    vector<User*> result;
     auto it = userList.find(username);
     if (it != userList.end())
-        result.push_back(it->second);
+        result.push_back(const_cast<User*>(&(it->second)));
     return result;
 }
 
 void UserList::iterateUsers() const
 {
-    for (const auto &pair : userList)
-        cout << "Username: " << pair.first << ", Role: " << (pair.second.getRole() == admin ? "Admin" : "Customer") << endl;
+    for (auto pair : userList)
+    {
+        cout << "Username: " << pair.first
+             << ", Role: " << (pair.second.getRole() == admin ? "Admin" : "Customer") << "\n"
+             << "Password: " << pair.second.getPassword() << "\n";
+        for(auto &item : pair.second.getCart().getItems())
+        {
+            cout << "Item: " << item.goods->getName()
+                 << ", Quantity: " << item.quantity
+                 << ", Status: " << item.status << "\n";
+        }
+        for(auto &item : pair.second.getUserOrder().getItems())
+        {
+            cout << "Item: " << item.goods->getName()
+                 << ", Quantity: " << item.quantity
+                 << ", Status: " << item.status << "\n";
+        }
+        cout << "----------------------------------------\n";
+    }
 }
 
 vector<User> UserList::findUsersByRole(Role role) const

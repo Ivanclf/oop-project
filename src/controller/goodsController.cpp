@@ -11,7 +11,7 @@ void listAllGoods(User &user)
     goods_list->iterateGoods();
     if(user.getRole() == customer)
     {
-        cout << "\nNeed to add something?(1 for yes, else for no): ";
+        cout << "\nNeed to add something?\n(1 for yes, else for no): ";
         cin >> option;
         if(option == '1')
             addNew(*cart);
@@ -143,7 +143,7 @@ void searchGoods()
     Category category;
     int store;
     double price;
-    vector<Goods> result;
+    vector<Goods*> result;
     cout << "\n0. name"
          << "\n1. descipsion"
          << "\n2. category"
@@ -210,9 +210,9 @@ void searchGoods()
     }
     cout << "\nthe search result:";
     for (auto it = result.begin(); it != result.end(); ++it)
-        cout << "\nname:\t" << (*it).getName()
-             << "\tdescription:\t" << (*it).getDesc()
-             << "\tprice:\t" << (*it).getPrice()
-             << "\tcategory:\t" << (*it).getCategory()
-             << "\tstorage:\t" << (*it).getStorage() << "\n";
+        cout << "\nname:\t" << (*it)->getName()
+             << "\tdescription:\t" << (*it)->getDesc()
+             << "\tprice:\t" << (*it)->getPrice()
+             << "\tcategory:\t" << (*it)->getCategory()
+             << "\tstorage:\t" << (*it)->getStorage() << "\n";
 }

@@ -14,12 +14,10 @@ void customerController(User &user)
              << "\n5. Open your order"
              << "\nChoose an option that you wanna do:\t";
         cin >> choice;
-        auto cart = user.getCart();
-        auto order = user.getUserOrder();
         switch (choice)
         {
         case 0:
-            cout << "hava a nice day~\n";
+            cout << "have a nice day~\n";
             loginController();
             break;
         case 1:
@@ -32,10 +30,11 @@ void customerController(User &user)
             searchGoods();
             break;
         case 4:
-            cartController(cart, order);
+            cartController(user.getCart(), user.getUserOrder());
             break;
         case 5:
-            orderController(order);
+            orderController(user.getUserOrder());
+            break;
         default:
             cout << "you have pressed a wrong number, please press again!\n";
             continue;

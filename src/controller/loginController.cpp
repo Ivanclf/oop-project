@@ -44,19 +44,18 @@ void loginUser()
     cin >> username;
     cout << "Enter password: ";
     cin >> password;
-
     auto users = user_list->findUserByUsername(username);
     if (users.empty())
     {
         cout << "User not found. Please register first.\n";
         return;
     }
-
-    User user = users[0];
-    if (!user.getUsername().empty() && user.getPassword() == password)
+    User *userPtr = users.back();
+    if (!userPtr->getUsername().empty() && userPtr->getPassword() == password)
     {
-        cout << "Login successful! Welcome, " << (user.getRole() == admin ? "Admin" : "Customer") << " " << user.getUsername() << ".\n";
-        user.getRole() == admin ? adminController(user) : customerController(user);
+        cout << "Login successful! Welcome, " << (userPtr->getRole() == admin ? "Admin" : "Customer") << " " << userPtr->getUsername() << ".\n";
+        userPtr->getRole() == admin ? adminController(*userPtr) : customerController(*userPtr);
+        return;
     }
     else
         cout << "Incorrect username or password. Please try again.\n";

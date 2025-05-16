@@ -1,7 +1,7 @@
 #include "../include/header.hpp"
 using namespace std;
 
-Goods::Goods() : name("Unnamed"), desc("No description"), category(Category::home), price(0.0), storage(0) {}
+Goods::Goods() : name("Unnamed"), desc("No description"), category(home), price(0.0), storage(0) {}
 
 Goods::Goods(const string &name, const string &desc, Category category, double price, int storage)
     : name(name), desc(desc), category(category), price(price), storage(storage) {}
@@ -31,12 +31,12 @@ unordered_map<string, Goods> GoodsList::getGoodsList() const
     return goodsList;
 }
 
-vector<Goods> GoodsList::findGoodsByName(const string &name) const
+vector<Goods*> GoodsList::findGoodsByName(const string &name) const
 {
-    vector<Goods> result;
+    vector<Goods*> result;
     auto it = goodsList.find(name);
     if (it != goodsList.end())
-        result.push_back(it->second);
+        result.push_back(const_cast<Goods*>(&(it->second)));
     return result;
 }
 
@@ -52,53 +52,53 @@ void GoodsList::iterateGoods() const
     }
 }
 
-vector<Goods> GoodsList::findGoodsByDesc(const string &desc) const
+vector<Goods*> GoodsList::findGoodsByDesc(const string &desc) const
 {
-    vector<Goods> result;
+    vector<Goods*> result;
     for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
     {
         if (it->second.getDesc() == desc)
         {
-            result.push_back(it->second);
+            result.push_back(const_cast<Goods*>(&(it->second)));
         }
     }
     return result;
 }
 
-vector<Goods> GoodsList::findGoodsByCategory(Category category) const
+vector<Goods*> GoodsList::findGoodsByCategory(Category category) const
 {
-    vector<Goods> result;
+    vector<Goods*> result;
     for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
     {
         if (it->second.getCategory() == category)
         {
-            result.push_back(it->second);
+            result.push_back(const_cast<Goods*>(&(it->second)));
         }
     }
     return result;
 }
 
-vector<Goods> GoodsList::findGoodsByPrice(double price) const
+vector<Goods*> GoodsList::findGoodsByPrice(double price) const
 {
-    vector<Goods> result;
+    vector<Goods*> result;
     for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
     {
         if (it->second.getPrice() == price)
         {
-            result.push_back(it->second);
+            result.push_back(const_cast<Goods*>(&(it->second)));
         }
     }
     return result;
 }
 
-vector<Goods> GoodsList::findGoodsByStorage(int storage) const
+vector<Goods*> GoodsList::findGoodsByStorage(int storage) const
 {
-    vector<Goods> result;
+    vector<Goods*> result;
     for (auto it = goodsList.begin(); it != goodsList.end(); ++it)
     {
         if (it->second.getStorage() == storage)
         {
-            result.push_back(it->second);
+            result.push_back(const_cast<Goods*>(&(it->second)));
         }
     }
     return result;

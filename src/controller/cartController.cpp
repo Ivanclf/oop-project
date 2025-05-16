@@ -1,12 +1,12 @@
 #include "../../include/header.hpp"
 using namespace std;
-
 extern GoodsList *goods_list;
 
-void cartController(Cart &userCart, Order &orders)
+void cartController(Cart &userCart, Order &order)
 {
-    int choice, option = 0, quantity = 0;
+    int choice, quantity = 0;
     bool temp = false;
+    string name;
     while (true)
     {
         cout << "\nThis is your cart. What you have chosen is on the list:\n";
@@ -18,65 +18,75 @@ void cartController(Cart &userCart, Order &orders)
              << "\n4. Add a single item in cart to order"
              << "\nChoose an option that you wanna do:\t";
         cin >> choice;
-        auto item = &(userCart.getItem(option));
         switch (choice)
         {
         case 0:
             cout << "ByeBye!~\n";
             return;
         case 1:
-            cout << "Input the order that you wanna delete: \t";
-            cin >> option;
-            if (userCart.deleteItem(option))
+            cout << "Input the name of the item you want to delete: ";
+            cin >> name;
+            if (userCart.deleteItem(name))
                 cout << "you have delete a item successfully\n";
             else
-                cout << "delete failed! check if you have inputted right order\n";
+                cout << "delete failed! check if you have inputted right name\n";
             break;
         case 2:
-            cout << "Input the order that you wanna change: \t";
-            cin >> option;
-            if (option <= 0 || option > userCart.getSize())
-            {
-                cout << "change failed! check if you inputted right order\n";
-                break;
-            }
+            cout << "Input the name of the item you want to change: ";
+            cin >> name;
             cout << "Input the new quantity:\t";
             cin >> quantity;
             if (!quantity)
             {
-                temp = userCart.deleteItem(option);
+                temp = userCart.deleteItem(name);
                 if (temp)
                     cout << "you have delete a item successfully\n";
                 else
-                    cout << "delete failed! check if you have inputted right order\n";
+                    cout << "delete failed! check if you have inputted right name\n";
                 break;
             }
-            item = &(userCart.getItem(option));
-            cout << item->item.getStorage() << '\n';
-            if (userCart.changeQuantity(*item, quantity))
+            if (userCart.changeQuantity(name, quantity))
             {
                 cout << "you have change the quantity of a item successfully\n";
             }
             else
-                cout << "change failed! check if the storage is enough!";
+                cout << "change failed! check if the storage is enough or name is correct!";
             break;
-        case 3: 
-            if (userCart.getSize() == 0) {
+        case 3:
+            if (userCart.getSize() == 0)
+            {
                 cout << "Cart is empty, nothing to add.\n";
                 break;
             }
-            orders.addItem(userCart.getItems()); 
-            cout << "All items in cart have been added to your order.\n";
-            break;
-        case 4: 
-            cout << "Input the order number of the item to add to order: ";
-            cin >> option;
-            if (option <= 0 || option > userCart.getSize()) {
-                cout << "Invalid order number.\n";
-                break;
+            for (auto &it : userCart.getItems())
+                it.status = unpayed;
+            
+            for (auto &it : userCart.getItems())
+            {
+                if (it.goods)
+                {
+                    string gname = it.goods->getName();
+                    order.addItem(gname, it.quantity, it.status);
+                }
             }
-            orders.addItem(userCart.getItem(option));
-            cout << "Item has been added to your order.\n";
+            cout << "All items in cart have been added to your order.\n";
+            userCart.getItems().clear();
+            break;
+        case 4:
+            cout << "Input the name of the item to add to order: ";
+            cin >> name;
+            for (auto &it : userCart.getItems())
+            {
+                if (it.goods && it.goods->getName() == name)
+                {
+                    order.addItem(name, it.quantity, unpayed);
+                    userCart.deleteItem(name);
+                    cout << "Item has been added to your order.\n";
+                    goto end_case4;
+                }
+            }
+            cout << "Invalid item name.\n";
+        end_case4:
             break;
         default:
             cout << "you have pressed a wrong number, please press again!\n";
@@ -89,7 +99,7 @@ void addNew(Cart &userCart)
 {
     string name;
     int quantity;
-    vector<Goods> temp;
+    vector<Goods*> temp;
     while (true)
     {
         cout << "\nwhich one would you like to choose?"
@@ -107,8 +117,7 @@ void addNew(Cart &userCart)
         }
         else
         {
-            Item newItem = *(new Item(*temp.begin(), quantity));
-            userCart.addItem(newItem);
+            userCart.addItem(name, quantity);
             cout << "\noperation succeed!";
             break;
         }

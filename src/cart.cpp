@@ -4,73 +4,86 @@ extern GoodsList *goods_list;
 
 void Cart::iterateGoods() const
 {
-    int count = 1;
-    double total = 0;
-    if (items.empty())
+    if(items.empty())
     {
-        cout << "\nOops! the cart is empty, go and find something fine!";
+        cout << "No items in the cart.\n";
         return;
     }
-    for (const auto &it : items)
+    cout << "\nList of all items in your cart:\n";
+    for (const auto &item : items)
     {
-        cout << count++ << ": Name: " << it.item.getName()
-             << "\tDescripsion: " << it.item.getDesc()
-             << "\tPrice: " << it.item.getPrice()
-             << "\tquantity: " << it.quantity << "\n";
-        total += it.item.getPrice() * it.quantity;
+        if (item.goods)
+        {
+            cout << "Name: " << item.goods->getName()
+                 << ", Quantity: " << item.quantity
+                 << ", Status: " << item.status << '\n';
+        }
     }
-    cout << "total price: " << total;
-
-    getchar();
-    cout << "\nPress any key to continue";
-    getchar();
 }
 
-Item &Cart::getItem(const int order) { return items[order - 1]; }
+Item &Cart::getItem(string &name)
+{
+    for (auto &item : items)
+    {
+        if (item.goods && item.goods->getName() == name)
+            return item;
+    }
+    throw std::runtime_error("Item not found in cart");
+}
 
 vector<Item> &Cart::getItems() { return items; }
 
-void Cart::addItem(Goods *goods)
-{
-    for (auto &it : this->items)
+void Cart::addItem(string& name, int quantity) {  
+    if (quantity <= 0)
+        return;
+    auto it = goods_list->findGoodsByName(name);
+    if (it.empty())
     {
-        if (it.item.getName() == goods->getName())
+        cout << "Goods not found: " << name << endl;
+        return;
+    }
+    
+    Goods* goodsPtr = it.back();
+    for (auto &item : items)
+    {
+        if (item.goods && item.goods->getName() == name)
         {
-            it.quantity++;
+            item.quantity += quantity;
             return;
         }
     }
-    this->items.push_back(Item(*goods, 1));
+    items.emplace_back(goodsPtr, quantity);
 }
 
-void Cart::addItem(Item &item)
+bool Cart::deleteItem(string &name)
 {
-    for (auto &it : items)
+    for (auto it = items.begin(); it != items.end(); ++it)
     {
-        if (it.item.getName() == item.item.getName())
+        if (it->goods && it->goods->getName() == name)
         {
-            it.quantity++;
-            return;
+            items.erase(it);
+            return true;
         }
     }
-    items.push_back(item);
+    return false;
 }
 
-bool Cart::deleteItem(const int order)
+bool Cart::changeQuantity(string &name, const int quantity)
 {
-    if (order <= 0 || (long unsigned int)order > items.size())
-        return false;
-    items.erase(items.begin() + (order - 1));
-    return true;
-}
-
-bool Cart::changeQuantity(Item &item, const int quantity)
-{
-    if (item.item.getStorage() < quantity)
-        return false;
-    else
-        item.quantity = quantity;
-    return true;
+    for (auto &item : items)
+    {
+        if (item.goods && item.goods->getName() == name)
+        {
+            if (quantity <= 0)
+            {
+                deleteItem(name);
+                return true;
+            }
+            item.quantity = quantity;
+            return true;
+        }
+    }
+    return false;
 }
 
 int Cart::getSize() const { return items.size(); }

@@ -1,5 +1,5 @@
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef HEADER_HPP
+#define HEADER_HPP
 
 #include <iostream>
 #include <string>
@@ -12,10 +12,14 @@
 
 using namespace std;
 
-enum Role
+
+enum order_status
 {
-    admin,
-    customer
+    undefined,
+    unpayed,
+    not_delivered,
+    delivered,
+    checked
 };
 
 enum Category
@@ -26,13 +30,10 @@ enum Category
     baby_care
 };
 
-enum order_status
+enum Role
 {
-    undefined,
-    unpayed,
-    not_deliverd,
-    deliverd,
-    checked
+    admin,
+    customer
 };
 
 class Goods
@@ -64,17 +65,36 @@ public:
     void setStorage(int storage);
 };
 
+class GoodsList
+{
+private:
+    unordered_map<string, Goods> goodsList;
+
+public:
+    unordered_map<string, Goods> getGoodsList() const;
+
+    vector<Goods*> findGoodsByName(const string &name) const;
+    vector<Goods*> findGoodsByDesc(const string &desc) const;
+    vector<Goods*> findGoodsByCategory(Category category) const;
+    vector<Goods*> findGoodsByPrice(double price) const;
+    vector<Goods*> findGoodsByStorage(int storage) const;
+    bool setStorage(const string &name, int decline);
+    void iterateGoods() const;
+    bool deleteGoods(const string &name);
+    bool addGoods(const string &name, const string &desc, Category category, double price, int storage);
+    bool addGoods(Goods goods);
+    bool updateGoods(const string &name, const Goods &newGoods);
+};
+
 typedef struct ITEM
 {
-    Goods item;
+    Goods *goods;
     int quantity;
     order_status status;
 
-    ITEM(Goods item, int quantity) : item(item), quantity(quantity), status(undefined) {}
-    ITEM(Goods *goods, int quantity) : item(*goods), quantity(quantity), status(undefined) {}
-    ITEM(Goods item, int quantity, order_status status) : item(item), quantity(quantity), status(status) {}
-    ITEM(Goods *goods, int quantity, order_status status) : item(*goods), quantity(quantity), status(status) {}
-    ITEM() : item({}), quantity(0), status(undefined) {}
+    ITEM() : goods(nullptr), quantity(0), status(undefined) {}
+    ITEM(Goods *goods, int quantity, order_status status) : goods(goods), quantity(quantity), status(status) {}
+    ITEM(Goods *goods, int quantity) : goods(goods), quantity(quantity), status(undefined) {}
 } Item;
 
 class Cart
@@ -83,12 +103,11 @@ private:
     vector<Item> items;
 public:
     void iterateGoods() const;
-    Item &getItem(const int order);
+    Item &getItem(string &name);
     vector<Item> &getItems();
-    void addItem(Goods *goods);
-    void addItem(Item &item);
-    bool deleteItem(const int order);
-    bool changeQuantity(Item &item, const int quantity);
+    void addItem(string &name, int quantity);
+    bool deleteItem(string &name);
+    bool changeQuantity(string &name, const int quantity);
     int getSize() const;
 };
 
@@ -96,22 +115,20 @@ class Order
 {
 private:
     vector<Item> orderList;
-    
+
     void autoChangeStatus();
     void changeStorage();
+    string &printStatus(order_status status) const;
 public:
-    Order();
-    Order(const vector<Item> &items);
-    vector<Item> getItems() const;
+    vector<Item> &getItems();
     void sortByName();
-    static void sortByStatus(vector<Order> &orders);
-    void printAllItems() const;
-    void printItemsByStatus(order_status filterStatus) const;
-    void addItem(const Item &item);
-    void addItem(const vector<Item> &itemList);
-    bool deleteItem(const string &itemName);
+    void sortByStatus();
+    void iterateGoods() const;
+    void iterateGoodsByStatus(order_status filterStatus) const;
+    void addItem(string &name, int quantity, order_status status);
+    bool deleteItem(string &name);
     bool setItemStatus(const string &itemName, order_status newStatus);
-    order_status getItemStatus(const string &itemName) const;
+    order_status &getItemStatus(string &itemName);
 };
 
 class User
@@ -122,22 +139,17 @@ private:
     Role role;
     Cart userCart;
     Order orders;
-
 public:
     User();
     User(string name, string pwd, Role r);
-
+    User(string name, string pwd, Role r, Cart cart, Order order);
     string getUsername() const;
     void setUsername(const string &uname);
-
     string getPassword() const;
     void setPassword(const string &pwd);
-
     Role getRole() const;
     void setRole(Role r);
-
     Cart &getCart();
-
     Order &getUserOrder();
 };
 
@@ -145,45 +157,20 @@ class UserList
 {
 private:
     unordered_map<string, User> userList;
-
 public:
     unordered_map<string, User> getUserList() const;
-
-    vector<User> findUserByUsername(const string &username) const;
-
+    vector<User*> findUserByUsername(const string &username) const;
     void iterateUsers() const;
-
     vector<User> findUsersByRole(Role role) const;
-
     bool deleteUser(const string &username);
-
     bool addUser(const string &username, const string &password, Role role);
     bool addUser(User user);
     bool updateUser(const string &username, const User &newUser);
 };
 
-class GoodsList
-{
-private:
-    unordered_map<string, Goods> goodsList;
-
-public:
-    unordered_map<string, Goods> getGoodsList() const;
-
-    vector<Goods> findGoodsByName(const string &name) const;
-    vector<Goods> findGoodsByDesc(const string &desc) const;
-    vector<Goods> findGoodsByCategory(Category category) const;
-    vector<Goods> findGoodsByPrice(double price) const;
-    vector<Goods> findGoodsByStorage(int storage) const;
-    bool setStorage(const string &name, int decline);
-    void iterateGoods() const;
-    bool deleteGoods(const string &name);
-    bool addGoods(const string &name, const string &desc, Category category, double price, int storage);
-    bool addGoods(Goods goods);
-    bool updateGoods(const string &name, const Goods &newGoods);
-};
-
 void __init__();
+void testController();
+void printEnter();
 
 int loginController();
 void loginUser();
@@ -192,7 +179,7 @@ User registerUser();
 void adminController(User &user);
 void customerController(User &user);
 
-void cartController(Cart &userCart, Order &orders);
+void cartController(Cart &userCart, Order &order);
 void addNew(Cart &userCart);
 
 void changePassword(User &user);
@@ -205,6 +192,8 @@ void updateGoods();
 void deleteGoods();
 void searchGoods();
 
-void orderController(Order &orders); 
-
+void orderController(Order &orders);
+void changeOrderStatus(Order &orders);
+void change_Order_Status();
+void manageUserOrders();
 #endif
