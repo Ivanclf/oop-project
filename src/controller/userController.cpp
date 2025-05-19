@@ -39,6 +39,7 @@ void change_Order_Status()
     string userName, itemName;
     cout << "Input the username: ";
     cin >> userName;
+    getchar();
     auto users = user_list->findUserByUsername(userName);
     if (users.empty())
     {

@@ -33,12 +33,21 @@ void Order::iterateGoods() const {
 }
 
 void Order::iterateGoodsByStatus(order_status filterStatus) const {
+    vector<Item> filteredItems;
     for (const auto &item : orderList) {
         if (item.status == filterStatus && item.goods) {
-            cout << "Name: " << item.goods->getName()
-                 << ", Quantity: " << item.quantity
-                 << ", Status: " << printStatus(item.status) << '\n';
+            filteredItems.push_back(item);
         }
+    }
+    if (filteredItems.empty()) {
+        cout << "No items with status " << printStatus(filterStatus) << ".\n";
+        return;
+    }
+    cout << "\nItems with status " << printStatus(filterStatus) << ":\n";
+    for (const auto &item : filteredItems) {
+        cout << "Name: " << item.goods->getName()
+             << ", Quantity: " << item.quantity
+             << ", Status: " << printStatus(item.status) << '\n';
     }
 }
 
