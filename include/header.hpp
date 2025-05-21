@@ -44,9 +44,13 @@ private:
     Category category;
     double price;
     int storage;
+    bool isDiscounted;
+    double discountScale;
+    double discountedPrice;
 
 public:
     Goods();
+    Goods(const string &name, const string &desc, Category category, double price, int storage, bool isDiscounted = false, double discountScale = 0.0);
     Goods(const string &name, const string &desc, Category category, double price, int storage);
 
     string getName() const;
@@ -63,6 +67,12 @@ public:
 
     int getStorage() const;
     void setStorage(int storage);
+
+    bool getIsDiscounted() const;
+    void setIsDiscounted(bool isDiscounted);
+
+    double getDiscountScale() const;
+    void setDiscountScale(double discountScale);
 };
 
 class GoodsList
@@ -82,6 +92,7 @@ public:
     void iterateGoods() const;
     bool deleteGoods(const string &name);
     bool addGoods(const string &name, const string &desc, Category category, double price, int storage);
+    bool addGoods(const string &name, const string &desc, Category category, double price, int storage, bool isDiscounted, double discountScale);
     bool addGoods(Goods goods);
     bool updateGoods(const string &name, const Goods &newGoods);
 };

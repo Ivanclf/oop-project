@@ -1,10 +1,21 @@
 #include "../include/header.hpp"
 using namespace std;
 
-Goods::Goods() : name("Unnamed"), desc("No description"), category(home), price(0.0), storage(0) {}
+Goods::Goods() : name("Unnamed"), desc("No description"), category(Category::home), price(0.0), storage(0), isDiscounted(false), discountScale(0.0), discountedPrice(0.0) {}
 
-Goods::Goods(const string &name, const string &desc, Category category, double price, int storage)
-    : name(name), desc(desc), category(category), price(price), storage(storage) {}
+Goods::Goods(const string &name, const string &desc, Category category, double price, int storage) : name(name), desc(desc), category(category), price(price), storage(storage), isDiscounted(false), discountScale(0), discountedPrice(price) {}
+
+Goods::Goods(const string &name, const string &desc, Category category, double price, int storage, bool isDiscounted, double discountScale) : name(name), desc(desc), category(category), price(price), storage(storage), isDiscounted(isDiscounted), discountScale(discountScale)
+{
+    if (isDiscounted)
+    {
+        discountedPrice = price * discountScale;
+    }
+    else
+    {
+        discountedPrice = price;
+    }
+}
 
 string Goods::getName() const { return name; }
 
@@ -115,7 +126,17 @@ bool GoodsList::addGoods(const string &name, const string &desc, Category catego
     {
         return false; // 商品已存在
     }
-    goodsList[name] = Goods(name, desc, category, price, storage);
+    goodsList[name] = Goods(name, desc, category, price, storage, false, 0.0);
+    return true;
+}
+
+bool GoodsList::addGoods(const string &name, const string &desc, Category category, double price, int storage, bool isDiscounted, double discountScale)
+{
+    if (goodsList.find(name) != goodsList.end())
+    {
+        return false; // 商品已存在
+    }
+    goodsList[name] = Goods(name, desc, category, price, storage, isDiscounted, discountScale);
     return true;
 }
 
