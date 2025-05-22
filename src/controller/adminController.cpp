@@ -19,6 +19,8 @@ void adminController(User &user)
              << "\n8. Find goods"
              << "\n9. Manage user order status"
              << "\n10. Change order status"
+             << "\n11. Change goods discount"
+             << "\n12. Change user discount"
              << "\nChoose an option that you want to perform:\t";
         cin >> choice;
         switch (choice)
@@ -56,6 +58,12 @@ void adminController(User &user)
             break;
         case 10:
             change_Order_Status();
+            break;
+        case 11:
+            changeGoodsDiscount();
+            break;
+        case 12:
+            changeUserDiscount();
             break;
         default:
             cout << "Invalid choice. Please try again.\n";

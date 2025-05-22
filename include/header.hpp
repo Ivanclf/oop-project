@@ -152,13 +152,13 @@ private:
     Role role;
     Cart userCart;
     Order orders;
-    bool isiDsCount;
-    vector<vector<int>> disCountList;
+    bool isDisCount;
+    unordered_map<int, int> disCountList;
 public:
     User();
     User(string name, string pwd, Role r);
     User(string name, string pwd, Role r, Cart cart, Order order);
-    User(string name, string pwd, Role r, Cart cart, Order order, bool isDiscounted, vector<vector<int>> discountList);
+    User(string name, string pwd, Role r, Cart cart, Order order, bool isDiscounted, unordered_map<int, int> discountList);
     
     string getUsername() const;
     void setUsername(const string &uname);
@@ -172,7 +172,7 @@ public:
     bool getIsDiscounted() const;
     void setIsDiscounted(bool isDiscounted);
 
-    vector<vector<int>> getDiscountList() const;
+    unordered_map<int, int> getDiscountList() const;
     bool addDiscount(int discount, int limit);
     bool deleteDiscount(int discount, int quantity);
 
@@ -223,4 +223,5 @@ void orderController(Order &orders);
 void changeOrderStatus(Order &orders);
 void change_Order_Status();
 void manageUserOrders();
+void computeDiscount(User &user);
 #endif

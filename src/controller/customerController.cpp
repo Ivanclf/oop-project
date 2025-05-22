@@ -31,7 +31,7 @@ void customerController(User &user)
             break;
         case 4:
             cartController(user.getCart(), user.getUserOrder());
-            
+            computeDiscount(user);
             break;
         case 5:
             orderController(user.getUserOrder());

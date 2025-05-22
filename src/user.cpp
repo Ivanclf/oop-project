@@ -22,20 +22,20 @@ Cart &User::getCart() { return userCart; }
 
 Order &User::getUserOrder() { return orders; }
 
-bool User::getIsDiscounted() const { return isiDsCount; }
+bool User::getIsDiscounted() const { return isDisCount; }
 
-void User::setIsDiscounted(bool isDiscounted) { isiDsCount = isDiscounted; }
+void User::setIsDiscounted(bool isDiscounted) { isDisCount = isDiscounted; }
 
-vector<vector<int>> User::getDiscountList() const { return disCountList; }
+unordered_map<int, int> User::getDiscountList() const { return disCountList; }
 
 bool User::addDiscount(int discount, int limit)
 {
     for (auto &item : disCountList)
     {
-        if (item[0] == discount && item[1] == limit)
+        if (item.first == discount && item.second == limit)
             return false;
     }
-    disCountList.push_back({discount, limit});
+    disCountList[discount] = limit;
     return true;
 }
 
@@ -43,7 +43,7 @@ bool User::deleteDiscount(int discount, int quantity)
 {
     for (auto it = disCountList.begin(); it != disCountList.end(); ++it)
     {
-        if ((*it)[0] == discount && (*it)[1] == quantity)
+        if (it->first == discount && it->second == quantity)
         {
             disCountList.erase(it);
             return true;

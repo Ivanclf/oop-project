@@ -151,7 +151,7 @@ bool GoodsList::addGoods(const string &name, const string &desc, Category catego
 {
     if (goodsList.find(name) != goodsList.end())
     {
-        return false; // 商品已存在
+        return false; 
     }
     goodsList[name] = Goods(name, desc, category, price, storage, false, 0.0);
     return true;
@@ -161,7 +161,7 @@ bool GoodsList::addGoods(const string &name, const string &desc, Category catego
 {
     if (goodsList.find(name) != goodsList.end())
     {
-        return false; // 商品已存在
+        return false; 
     }
     goodsList[name] = Goods(name, desc, category, price, storage, isDiscounted, discountScale);
     return true;
@@ -171,7 +171,7 @@ bool GoodsList::addGoods(Goods goods)
 {
     if (goodsList.find(goods.getName()) != goodsList.end())
     {
-        return false; // 商品已存在
+        return false; 
     }
     goodsList[goods.getName()] = goods;
     return true;
