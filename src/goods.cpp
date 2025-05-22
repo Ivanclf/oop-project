@@ -37,6 +37,30 @@ int Goods::getStorage() const { return storage; }
 
 void Goods::setStorage(int storage) { this->storage = storage; }
 
+bool Goods::getIsDiscounted() const { return isDiscounted; }
+
+void Goods::setIsDiscounted(bool isDiscounted) { this->isDiscounted = isDiscounted; }
+
+double Goods::getDiscountScale() const { return discountScale; }
+
+void Goods::setDiscountScale(double discountScale)
+{
+    this->discountScale = discountScale;
+    if (isDiscounted)
+    {
+        discountedPrice = price * discountScale;
+    }
+    else
+    {
+        discountedPrice = price;
+    }
+}
+
+double Goods::getDiscountedPrice() const
+{
+    return discountedPrice;
+}
+
 unordered_map<string, Goods> GoodsList::getGoodsList() const
 {
     return goodsList;
@@ -59,7 +83,10 @@ void GoodsList::iterateGoods() const
              << "\tDescripsion: " << pair.second.getDesc()
              << ",\tCategory: " << pair.second.getCategory()
              << ",\tPrice: " << pair.second.getPrice()
-             << ",\tStorage: " << pair.second.getStorage() << "\n";
+             << ",\tStorage: " << pair.second.getStorage();
+        if (pair.second.getIsDiscounted())
+            cout << ",\tDiscounted Price: " << pair.second.getDiscountedPrice();
+        cout << endl;
     }
 }
 

@@ -117,7 +117,7 @@ CATEGORY_INPUT:
     cout << "Enter new storage: ";
     cin >> storage;
 
-    update = new Goods(goodsNameNew, desc, category, price, storage);
+    update = new Goods(goodsNameNew, desc, category, price, storage, false, 0.0);
     goods_list->updateGoods(goodsNameOld, *update);
 
     cout << "\nGoods updated successfully!";

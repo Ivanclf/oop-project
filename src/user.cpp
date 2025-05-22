@@ -22,6 +22,36 @@ Cart &User::getCart() { return userCart; }
 
 Order &User::getUserOrder() { return orders; }
 
+bool User::getIsDiscounted() const { return isiDsCount; }
+
+void User::setIsDiscounted(bool isDiscounted) { isiDsCount = isDiscounted; }
+
+vector<vector<int>> User::getDiscountList() const { return disCountList; }
+
+bool User::addDiscount(int discount, int limit)
+{
+    for (auto &item : disCountList)
+    {
+        if (item[0] == discount && item[1] == limit)
+            return false;
+    }
+    disCountList.push_back({discount, limit});
+    return true;
+}
+
+bool User::deleteDiscount(int discount, int quantity)
+{
+    for (auto it = disCountList.begin(); it != disCountList.end(); ++it)
+    {
+        if ((*it)[0] == discount && (*it)[1] == quantity)
+        {
+            disCountList.erase(it);
+            return true;
+        }
+    }
+    return false;
+}
+
 unordered_map<string, User> UserList::getUserList() const { return userList; }
 
 vector<User*> UserList::findUserByUsername(const string &username) const

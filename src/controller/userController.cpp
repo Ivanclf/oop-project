@@ -87,3 +87,15 @@ void manageUserOrders()
     else
         cout << "Failed to update order status. Check item name.\n";
 }
+
+void computeDiscount(User &user)
+{
+    int total = 0, quantity = 0;
+    for (auto &it : user.getCart().getItems())
+    {
+        total += it.goods->getDiscountedPrice() * it.quantity;
+        quantity += it.quantity;
+    }
+    cout << "total quantity: " << quantity << ", total price: " << total << "\n";
+    for (auto &it : user.getDiscountList())
+}

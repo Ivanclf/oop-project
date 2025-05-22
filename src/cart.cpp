@@ -4,7 +4,7 @@ extern GoodsList *goods_list;
 
 void Cart::iterateGoods() const
 {
-    if(items.empty())
+    if (items.empty())
     {
         cout << "No items in the cart.\n";
         return;
@@ -16,8 +16,11 @@ void Cart::iterateGoods() const
         {
             cout << "Name: " << item.goods->getName()
                  << ", Quantity: " << item.quantity
-                 << ", Status: " << item.status << '\n';
-        }
+                 << ", Price: " << item.goods->getPrice();
+            if (item.goods->getIsDiscounted())
+                cout << ", Discounted Price: " << item.goods->getDiscountedPrice();
+            cout << ", Status: " << item.status << '\n';
+        }    
     }
 }
 
@@ -33,7 +36,8 @@ Item &Cart::getItem(string &name)
 
 vector<Item> &Cart::getItems() { return items; }
 
-void Cart::addItem(string& name, int quantity) {  
+void Cart::addItem(string &name, int quantity)
+{
     if (quantity <= 0)
         return;
     auto it = goods_list->findGoodsByName(name);
@@ -42,8 +46,8 @@ void Cart::addItem(string& name, int quantity) {
         cout << "Goods not found: " << name << endl;
         return;
     }
-    
-    Goods* goodsPtr = it.back();
+
+    Goods *goodsPtr = it.back();
     for (auto &item : items)
     {
         if (item.goods && item.goods->getName() == name)

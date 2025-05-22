@@ -73,6 +73,8 @@ public:
 
     double getDiscountScale() const;
     void setDiscountScale(double discountScale);
+
+    double getDiscountedPrice() const;
 };
 
 class GoodsList
@@ -150,16 +152,30 @@ private:
     Role role;
     Cart userCart;
     Order orders;
+    bool isiDsCount;
+    vector<vector<int>> disCountList;
 public:
     User();
     User(string name, string pwd, Role r);
     User(string name, string pwd, Role r, Cart cart, Order order);
+    User(string name, string pwd, Role r, Cart cart, Order order, bool isDiscounted, vector<vector<int>> discountList);
+    
     string getUsername() const;
     void setUsername(const string &uname);
+    
     string getPassword() const;
     void setPassword(const string &pwd);
+    
     Role getRole() const;
     void setRole(Role r);
+
+    bool getIsDiscounted() const;
+    void setIsDiscounted(bool isDiscounted);
+
+    vector<vector<int>> getDiscountList() const;
+    bool addDiscount(int discount, int limit);
+    bool deleteDiscount(int discount, int quantity);
+
     Cart &getCart();
     Order &getUserOrder();
 };
