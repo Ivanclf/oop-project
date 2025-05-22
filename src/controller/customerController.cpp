@@ -12,6 +12,7 @@ void customerController(User &user)
              << "\n3. Search goods"
              << "\n4. Open your cart"
              << "\n5. Open your order"
+             << "\n6. Compute discount"
              << "\nChoose an option that you wanna do:\t";
         cin >> choice;
         switch (choice)
@@ -31,10 +32,12 @@ void customerController(User &user)
             break;
         case 4:
             cartController(user.getCart(), user.getUserOrder());
-            computeDiscount(user);
             break;
         case 5:
             orderController(user.getUserOrder());
+            break;
+        case 6:
+            computeDiscount(user);
             break;
         default:
             cout << "you have pressed a wrong number, please press again!\n";

@@ -3,8 +3,8 @@ using namespace std;
 
 User::User() : username(""), password(""), role(customer), userCart(), orders() {}
 User::User(string name, string pwd, Role r) : username(name), password(pwd), role(r) {}
-
 User::User(string name, string pwd, Role r, Cart cart, Order order) : username(name), password(pwd), role(r), userCart(cart), orders(order) {}
+User::User(string name, string pwd, Role r, Cart cart, Order order, bool isDiscounted, unordered_map<int, int> &discountList) : username(name), password(pwd), role(r), userCart(cart), orders(order), isDisCount(isDiscounted), disCountList(discountList) {}
 
 string User::getUsername() const { return username; }
 

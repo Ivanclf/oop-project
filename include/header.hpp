@@ -158,7 +158,7 @@ public:
     User();
     User(string name, string pwd, Role r);
     User(string name, string pwd, Role r, Cart cart, Order order);
-    User(string name, string pwd, Role r, Cart cart, Order order, bool isDiscounted, unordered_map<int, int> discountList);
+    User(string name, string pwd, Role r, Cart cart, Order order, bool isDiscounted, unordered_map<int, int> &discountList);
     
     string getUsername() const;
     void setUsername(const string &uname);
@@ -224,4 +224,6 @@ void changeOrderStatus(Order &orders);
 void change_Order_Status();
 void manageUserOrders();
 void computeDiscount(User &user);
+void changeGoodsDiscount();
+void changeUserDiscount();
 #endif

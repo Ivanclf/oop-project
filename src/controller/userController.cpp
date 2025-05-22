@@ -2,6 +2,7 @@
 using namespace std;
 
 extern UserList *user_list;
+extern GoodsList *goods_list;
 
 void changePassword(User &user)
 {
@@ -93,24 +94,24 @@ void computeDiscount(User &user)
     int total = 0, quantity = 0, original = 0;
     for (auto &it : user.getCart().getItems())
     {
-        if (it.goods.getIsDiscounted())
+        original += it.goods->getPrice() * it.quantity;
+        if (it.goods->getIsDiscounted())
         {
-            total += it.goods.getDiscountedPrice() * it.quantity;
+            total += it.goods->getDiscountedPrice() * it.quantity;
             quantity += it.quantity;
-            cout << "You have enjoy discount on the goods: " << it.goods.getName() << " for total " << (it.goods.getPrice() - it.goods.getDiscountedPrice()) * it.quantity << "\n";
+            cout << "You have enjoy discount on the goods: " << it.goods->getName() << " for total " << (it.goods->getPrice() - it.goods->getDiscountedPrice()) * it.quantity << "\n";
         }
         else
         {
-            total += it.goods.getPrice() * it.quantity;
+            total += it.goods->getPrice() * it.quantity;
             quantity += it.quantity;
         }
     }
     for (auto &it : user.getDiscountList())
     {
-        if (it.second >= total && (original == 0 || it.second < original))
-        {
-            original = it.second;
-            total = total * (1 - it.first / 100.0);
+        if (total >= it.second && total >= it.first) {
+            total -= it.second;
+            break;
         }
     }
     cout << "total quantity: " << quantity << ", total price: " << total << "\n";
@@ -138,7 +139,7 @@ void changeGoodsDiscount()
         return;
     }
 
-    goods[0]->setDiscount(discount);
+    goods[0]->setDiscountScale(discount);
     cout << "Goods discount updated successfully\n";
 }
 
@@ -157,7 +158,7 @@ void changeUserDiscount()
     User* user = users[0];
     cout << "Current user discounts:\n";
     for (auto &discount : user->getDiscountList()) {
-        cout << "Spend " << discount.second << " get " << discount.first << "% off\n";
+        cout << "Spend " << discount.first << " get " << discount.second << "% off\n";
     }
 
     int choice;
