@@ -10,7 +10,7 @@ void changePassword(User &user)
     cout << "Enter new password: ";
     cin >> newPassword;
     user.setPassword(newPassword);
-    writeToFile();  // 同步到文件
+    writeToFile();  
     cout << "Password updated successfully.\n";
 }
 
@@ -34,9 +34,9 @@ USERNAME_INPUT:
     cin >> password;
     update = new User(usernameNew, password, customer);
     if (user_list->updateUser(usernameOld, *update)) {
-        writeToFile();  // 同步到文件
+        writeToFile();  
     }
-    delete update;  // 释放动态分配的内存
+    delete update;  
 }
 
 void change_Order_Status()
@@ -61,7 +61,7 @@ void change_Order_Status()
     int statusInt;
     cin >> statusInt;
     if (orders.setItemStatus(itemName, static_cast<order_status>(statusInt))) {
-        writeToFile();  // 同步到文件
+        writeToFile();
         cout << "Order status updated.\n";
     }
     else
@@ -90,7 +90,7 @@ void manageUserOrders()
     int statusInt;
     cin >> statusInt;
     if (orders.setItemStatus(itemName, static_cast<order_status>(statusInt))) {
-        writeToFile();  // 同步到文件
+        writeToFile();
         cout << "Order status updated.\n";
     }
     else
@@ -148,7 +148,7 @@ void changeGoodsDiscount()
     }
 
     goods[0]->setDiscountScale(discount);
-    writeToFile();  // 同步到文件
+    writeToFile();  
     cout << "Goods discount updated successfully\n";
 }
 
@@ -182,7 +182,7 @@ void changeUserDiscount()
         cin >> limit;
         
         if (user->addDiscount(discount, limit)) {
-            writeToFile();  // 同步到文件
+            writeToFile();  
             cout << "Discount added successfully\n";
         } else {
             cout << "This discount already exists\n";
@@ -195,7 +195,7 @@ void changeUserDiscount()
         cin >> limit;
         
         if (user->deleteDiscount(discount, limit)) {
-            writeToFile();  // 同步到文件
+            writeToFile();  
             cout << "Discount removed successfully\n";
         } else {
             cout << "Discount not found\n";

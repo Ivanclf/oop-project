@@ -19,7 +19,7 @@ Role User::getRole() const { return role; }
 void User::setRole(Role r) { role = r; }
 
 void User::setRole(string role) { 
-    if (role == "admin") {
+    if (role == "0") {
         this->role = admin;
     } else {
         this->role = customer;
@@ -79,6 +79,10 @@ vector<User*> UserList::findUserByUsername(const string &username) const
 
 void UserList::iterateUsers() const
 {
+    if(userList.empty()) {
+        cout << "No users" << endl;
+        return;
+    }
     for (auto pair : userList)
     {
         cout << "Username: " << pair.first

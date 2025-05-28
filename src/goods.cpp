@@ -30,13 +30,13 @@ Category Goods::getCategory() const { return category; }
 void Goods::setCategory(Category category) { this->category = category; }
 
 void Goods::setCategory(string category) { 
-    if (category == "home") {
+    if (category == "0") {
         this->category = home;
-    } else if (category == "food") {
+    } else if (category == "1") {
         this->category = food;
-    } else if (category == "cloth") {
+    } else if (category == "2") {
         this->category = cloth;
-    } else if (category == "baby_care") {
+    } else if (category == "3") {
         this->category = baby_care;
     } else {
         this->category = home;
@@ -91,6 +91,10 @@ vector<Goods*> GoodsList::findGoodsByName(const string &name) const
 
 void GoodsList::iterateGoods() const
 {
+    if(goodsList.empty()) {
+        cout << "No goods" << endl;
+        return;
+    }
     for (const auto &pair : goodsList)
     {
         cout << "Name: " << pair.first

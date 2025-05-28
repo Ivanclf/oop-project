@@ -96,6 +96,12 @@ clean:
 	$(RM) $(call FIXPATH,$(LIB)/goods_list.txt)
 	@echo Cleanup complete!
 
+.PHONY: file
+file:
+	$(RM) $(call FIXPATH,$(LIB)/user_list.txt)
+	$(RM) $(call FIXPATH,$(LIB)/goods_list.txt)
+	@echo User and goods list files cleaned!
+
 run: all
 	./$(OUTPUTMAIN)
 	@echo Executing 'run: all' complete!
