@@ -2,6 +2,7 @@
 using namespace std;
 
 extern GoodsList *goods_list;
+extern UserList *user_list;
 
 vector<Item> &Order::getItems() { return orderList; }
 
@@ -68,21 +69,26 @@ void Order::addItem(string &name, int quantity, order_status status) {
                 item.quantity = goodsPtr->getStorage();
                 goodsPtr->setStorage(0);
                 autoChangeStatus();
+                writeToFile();
                 return;
             }
             item.quantity += quantity;
             item.status = status;
             goodsPtr->setStorage(goodsPtr->getStorage() - quantity);
             autoChangeStatus();
+            writeToFile();
             return;
         }
     }
     orderList.emplace_back(goodsPtr, quantity, status);
+    writeToFile();
 }
+
 bool Order::deleteItem(string &name) {
     for (auto it = orderList.begin(); it != orderList.end(); ++it) {
         if (it->goods && it->goods->getName() == name) {
             orderList.erase(it);
+            writeToFile();
             return true;
         }
     }
@@ -93,6 +99,7 @@ bool Order::setItemStatus(const string &itemName, order_status newStatus) {
     for (auto &item : orderList) {
         if (item.goods && item.goods->getName() == itemName) {
             item.status = newStatus;
+            writeToFile();
             return true;
         }
     }
@@ -114,8 +121,10 @@ void Order::autoChangeStatus() {
         if (item.status == unpayed) {
             std::this_thread::sleep_for(std::chrono::seconds(2));
             item.status = not_delivered;
+            writeToFile();
             std::this_thread::sleep_for(std::chrono::seconds(2));
             item.status = delivered;
+            writeToFile();
         }
     }
 }
@@ -126,6 +135,7 @@ void Order::changeStorage() {
             int currentStorage = item.goods->getStorage();
             if (currentStorage >= item.quantity) {
                 item.goods->setStorage(currentStorage - item.quantity);
+                writeToFile();
             }
         }
     }

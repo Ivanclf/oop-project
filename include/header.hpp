@@ -9,6 +9,17 @@
 #include <stdlib.h>
 #include <thread>
 #include <chrono>
+#include <fstream>
+#include <sstream>
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
+#include <cmath>
+#include <cctype>
+#include <cstdarg>
+#include <cstddef>
+#include <cstdint>
+#include <cstdbool>
 
 using namespace std;
 
@@ -176,8 +187,8 @@ public:
     bool addDiscount(int discount, int limit);
     bool deleteDiscount(int discount, int quantity);
 
-    Cart &getCart();
-    Order &getUserOrder();
+    Cart &getCart() const;
+    Order &getUserOrder() const;
 };
 
 class UserList
@@ -198,6 +209,10 @@ public:
 void __init__();
 void testController();
 void printEnter();
+
+
+void writeToFile();  
+void readFromFile();  
 
 int loginController();
 void loginUser();

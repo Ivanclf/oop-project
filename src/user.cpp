@@ -18,9 +18,9 @@ Role User::getRole() const { return role; }
 
 void User::setRole(Role r) { role = r; }
 
-Cart &User::getCart() { return userCart; }
+Cart &User::getCart() const { return const_cast<Cart&>(userCart); }
 
-Order &User::getUserOrder() { return orders; }
+Order &User::getUserOrder() const { return const_cast<Order&>(orders); }
 
 bool User::getIsDiscounted() const { return isDisCount; }
 
@@ -106,7 +106,11 @@ vector<User> UserList::findUsersByRole(Role role) const
 
 bool UserList::deleteUser(const string &username)
 {
-    return userList.erase(username) > 0;
+    bool result = userList.erase(username) > 0;
+    if (result) {
+        writeToFile();  // 同步到文件
+    }
+    return result;
 }
 
 bool UserList::addUser(const string &username, const string &password, Role role)
@@ -116,6 +120,7 @@ bool UserList::addUser(const string &username, const string &password, Role role
         return false;
     }
     userList[username] = User(username, password, role);
+    writeToFile();  // 同步到文件
     return true;
 }
 
@@ -126,6 +131,7 @@ bool UserList::addUser(User user)
         return false;
     }
     userList[user.getUsername()] = user;
+    writeToFile();  // 同步到文件
     return true;
 }
 
@@ -137,6 +143,7 @@ bool UserList::updateUser(const string &username, const User &newUser)
         User updatedUser = newUser;
         userList.erase(it);
         userList[updatedUser.getUsername()] = updatedUser;
+        writeToFile();  // 同步到文件
         return true;
     }
     return false;

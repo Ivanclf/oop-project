@@ -15,6 +15,7 @@ void testController()
     test->getCart().addItem(name1, 12);
     test->getCart().addItem(name2, 5);
     test->getCart().addItem(name3, 2);
+    writeToFile();
 }
 
 void printEnter() { cout << "\n"; }
