@@ -29,6 +29,20 @@ Category Goods::getCategory() const { return category; }
 
 void Goods::setCategory(Category category) { this->category = category; }
 
+void Goods::setCategory(string category) { 
+    if (category == "home") {
+        this->category = home;
+    } else if (category == "food") {
+        this->category = food;
+    } else if (category == "cloth") {
+        this->category = cloth;
+    } else if (category == "baby_care") {
+        this->category = baby_care;
+    } else {
+        this->category = home;
+    }
+}
+
 double Goods::getPrice() const { return price; }
 
 void Goods::setPrice(double price) { this->price = price; }

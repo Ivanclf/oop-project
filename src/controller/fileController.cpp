@@ -1,161 +1,142 @@
 #include "../../include/header.hpp"
-using namespace std;
 
 extern UserList *user_list;
 extern GoodsList *goods_list;
 
+namespace {
+    fstream file;
+}
+
 void writeToFile() {
-    
-    ofstream user_file("../lib/user_list.txt");
-    if (!user_file.is_open()) {
-        cerr << "Error: Cannot open user_list.txt for writing\n";
-        return;
-    }
-
-    try {
-        auto user_list_map = user_list->getUserList();
-        for (auto& user_pair : user_list_map) {
-            User& user = user_pair.second;
-            user_file << user.getUsername() << " "
-                     << user.getPassword() << " "
-                     << static_cast<int>(user.getRole()) << " "
-                     << user.getIsDiscounted() << "\n";  
-            
-            
-            const auto& discounts = user.getDiscountList();
-            user_file << discounts.size() << "\n";
-            for (const auto& discount : discounts) {
-                user_file << discount.first << " " << discount.second << "\n";
+    file.open(ROOT_DIR + "lib/" + USER_FILE, ios::out);
+    for (auto &user : user_list->getUserList()) {
+        file << user.first << " " << user.second.getPassword() << " " << user.second.getRole() << endl;
+        if (user.second.getCart().getSize() > 0) {
+            file << "cart" << endl;
+            for (auto &item : user.second.getCart().getItems()) {
+                file << item.goods->getName() << " " << item.quantity << " " << item.status << endl;
             }
-
-            
-            auto& cart = user.getCart();
-            const auto& cart_items = cart.getItems();
-            user_file << cart_items.size() << "\n";
-            for (const auto& item : cart_items) {
-                if (item.goods) {
-                    user_file << item.goods->getName() << " "
-                             << item.quantity << " "
-                             << static_cast<int>(item.status) << "\n";
-                }
-            }
-
-            
-            auto& order = user.getUserOrder();
-            const auto& order_items = order.getItems();
-            user_file << order_items.size() << "\n";
-            for (const auto& item : order_items) {
-                if (item.goods) {
-                    user_file << item.goods->getName() << " "
-                             << item.quantity << " "
-                             << static_cast<int>(item.status) << "\n";
-                }
-            }
+            file << "cart end" << endl;
         }
-    } catch (const exception& e) {
-        cerr << "Error writing user data: " << e.what() << "\n";
-    }
-    user_file.close();
-
-    
-    ofstream goods_file("../lib/goods_list.txt");
-    if (!goods_file.is_open()) {
-        cerr << "Error: Cannot open goods_list.txt for writing\n";
-        return;
-    }
-
-    try {
-        for (const auto& goods_pair : goods_list->getGoodsList()) {
-            const Goods& goods = goods_pair.second;
-            goods_file << goods.getName() << " "
-                      << goods.getDesc() << " "  
-                      << static_cast<int>(goods.getCategory()) << " "  
-                      << goods.getPrice() << " "
-                      << goods.getStorage() << " "  
-                      << goods.getIsDiscounted() << " "
-                      << goods.getDiscountScale() << "\n";
+        if (user.second.getUserOrder().getItems().size() > 0) {
+            file << "order" << endl;
+            for (auto &item : user.second.getUserOrder().getItems()) {
+                file << item.goods->getName() << " " << item.quantity << " " << item.status << endl;
+            }
+            file << "order end" << endl;
         }
-    } catch (const exception& e) {
-        cerr << "Error writing goods data: " << e.what() << "\n";
+        if (user.second.getIsDiscounted()) {
+            file << "discount" << endl;
+            for (auto &item : user.second.getDiscountList()) {
+                file << item.first << " " << item.second << endl;
+            }
+            file << "discount end" << endl;
+        }
+        file << endl;
     }
-    goods_file.close();
+    file.close();
+
+    file.open(ROOT_DIR + "lib/" + GOODS_FILE, ios::out);
+    for (auto &goods : goods_list->getGoodsList()) {
+        file << goods.first << " " << goods.second.getDesc() << " " << goods.second.getCategory() << " " << goods.second.getPrice() << " " << goods.second.getStorage() << endl;
+        if (goods.second.getIsDiscounted()) {
+            file << "discount" << endl;
+            file << goods.second.getDiscountScale() << endl;
+            file << "discount end" << endl;
+        }
+    }
+    file.close();
 }
 
 void readFromFile() {
-    
-    ifstream user_file("../lib/user_list.txt");
-    if (!user_file.is_open()) {
-        cerr << "Warning: Cannot open user_list.txt for reading\n";
+    file.open(ROOT_DIR + "lib/" + USER_FILE, ios::in);
+    if (!file.is_open()) {
+        cout << "Failed to open user file" << endl;
         return;
     }
-
-    try {
-        string username, password;
-        int role;
-        bool isDiscounted;
-        
-        while (user_file >> username >> password >> role >> isDiscounted) {
-            
-            int discount_count;
-            user_file >> discount_count;
-            
-            unordered_map<int, int> discounts;
-            for (int i = 0; i < discount_count; i++) {
-                int threshold, amount;
-                user_file >> threshold >> amount;
-                discounts[threshold] = amount;
+    string line;
+    User user;
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string username, password, role;
+        ss >> username >> password >> role;
+        user.setUsername(username);
+        user.setPassword(password); 
+        user.setRole(role);
+        user.setIsDiscounted(true);
+        if (line == "cart") {
+            Cart cart;
+            stringstream ss(line);
+            while (getline(file, line)) {
+                if (line == "cart end") {
+                    break;
+                }
+                string name, quantity, status;
+                ss >> name >> quantity >> status;
+                Goods *goods = goods_list->findGoodsByName(name).back();
+                if (goods) {
+                    string name = goods->getName();
+                    cart.addItem(name, stoi(quantity));
+                    cart.getItem(name).status = order_status(stoi(status));
+                }
             }
-
-            
-            User user(username, password, static_cast<Role>(role), Cart(), Order(), isDiscounted, discounts);
-
-            
-            int cart_size;
-            user_file >> cart_size;
-            for (int i = 0; i < cart_size; i++) {
-                string item_name;
-                int quantity, status;
-                user_file >> item_name >> quantity >> status;
-                user.getCart().addItem(item_name, quantity);
-            }
-
-            
-            int order_size;
-            user_file >> order_size;
-            for (int i = 0; i < order_size; i++) {
-                string item_name;
-                int quantity, status;
-                user_file >> item_name >> quantity >> status;
-                user.getUserOrder().addItem(item_name, quantity, static_cast<order_status>(status));
-            }
-            
-            user_list->addUser(user);
         }
-    } catch (const exception& e) {
-        cerr << "Error reading user data: " << e.what() << "\n";
+        if (line == "order") {
+            Order order;
+            stringstream ss(line);
+            while (getline(file, line)) {
+                if (line == "order end") {
+                    break;
+                }
+                string name, quantity, status;
+                ss >> name >> quantity >> status;
+                Goods *goods = goods_list->findGoodsByName(name).back();
+                if (goods) {
+                    string name = goods->getName();
+                    order.addItem(name, stoi(quantity), order_status(stoi(status)));
+                } 
+            }
+            user.setUserOrder(order);
+        }
+        if (line == "discount") {
+            unordered_map<int, int> discountList;
+            stringstream ss(line);
+            while (getline(file, line)) {
+                if (line == "discount end") {
+                    break;
+                }
+                int discount, limit;
+                ss >> discount >> limit;
+                discountList[discount] = limit;
+            }
+            user.setDiscountList(discountList);
+        }
     }
-    user_file.close();
+    file.close();
 
-    
-    ifstream goods_file("../lib/goods_list.txt");
-    if (!goods_file.is_open()) {
-        cerr << "Warning: Cannot open goods_list.txt for reading\n";
+    file.open(ROOT_DIR + "lib/" + GOODS_FILE, ios::in);
+    if (!file.is_open()) {
+        cout << "Failed to open goods file" << endl;
         return;
     }
-
-    try {
-        string name, desc;
-        int category;
-        double price, discount_scale;
-        int storage;
-        bool is_discounted;
-        
-        while (goods_file >> name >> desc >> category >> price >> storage >> is_discounted >> discount_scale) {
-            Goods goods(name, desc, static_cast<Category>(category), price, storage, is_discounted, discount_scale);
-            goods_list->addGoods(goods);
+    Goods goods;
+    stringstream ss(line);
+    while (getline(file, line)) {
+        stringstream ss(line);
+        string name, desc, category, price, storage;
+        ss >> name >> desc >> category >> price >> storage;
+        goods.setName(name);
+        goods.setDesc(desc);
+        goods.setCategory(category);
+        goods.setPrice(stod(price));
+        goods.setStorage(stoi(storage));
+        if (line == "discount") {
+            goods.setIsDiscounted(true);
+            double discountScale;
+            ss >> discountScale;
+            goods.setDiscountScale(discountScale);
         }
-    } catch (const exception& e) {
-        cerr << "Error reading goods data: " << e.what() << "\n";
+        goods_list->addGoods(goods);
     }
-    goods_file.close();
+    file.close();
 }

@@ -92,6 +92,8 @@ clean:
 	$(RM) $(OUTPUTMAIN)
 	$(RM) $(call FIXPATH,$(OBJECTS))
 	$(RM) $(call FIXPATH,$(DEPS))
+	$(RM) $(call FIXPATH,$(LIB)/user_list.txt)
+	$(RM) $(call FIXPATH,$(LIB)/goods_list.txt)
 	@echo Cleanup complete!
 
 run: all

@@ -68,14 +68,12 @@ void Order::addItem(string &name, int quantity, order_status status) {
                 cout << "Not enough storage for " << name  << "\ntake the maximum" << endl;
                 item.quantity = goodsPtr->getStorage();
                 goodsPtr->setStorage(0);
-                autoChangeStatus();
                 writeToFile();
                 return;
             }
             item.quantity += quantity;
             item.status = status;
             goodsPtr->setStorage(goodsPtr->getStorage() - quantity);
-            autoChangeStatus();
             writeToFile();
             return;
         }
@@ -114,19 +112,6 @@ order_status &Order::getItemStatus(string &itemName) {
     }
     static order_status invalid_status = undefined;
     return invalid_status;
-}
-
-void Order::autoChangeStatus() {
-    for (auto &item : orderList) {
-        if (item.status == unpayed) {
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            item.status = not_delivered;
-            writeToFile();
-            std::this_thread::sleep_for(std::chrono::seconds(2));
-            item.status = delivered;
-            writeToFile();
-        }
-    }
 }
 
 void Order::changeStorage() {

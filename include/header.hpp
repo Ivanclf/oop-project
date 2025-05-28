@@ -7,22 +7,15 @@
 #include <vector>
 #include <algorithm>
 #include <stdlib.h>
-#include <thread>
 #include <chrono>
 #include <fstream>
 #include <sstream>
-#include <cstdlib>
-#include <cstring>
-#include <cstdio>
-#include <cmath>
-#include <cctype>
-#include <cstdarg>
-#include <cstddef>
-#include <cstdint>
-#include <cstdbool>
 
 using namespace std;
 
+const string ROOT_DIR = "/home/kylin/桌面/oop/";
+const string USER_FILE = "user_list.txt";
+const string GOODS_FILE = "goods_list.txt";
 
 enum order_status
 {
@@ -72,6 +65,7 @@ public:
 
     Category getCategory() const;
     void setCategory(Category category);
+    void setCategory(string category);
 
     double getPrice() const;
     void setPrice(double price);
@@ -140,7 +134,6 @@ class Order
 private:
     vector<Item> orderList;
 
-    void autoChangeStatus();
     void changeStorage();
     string &printStatus(order_status status) const;
 public:
@@ -179,16 +172,21 @@ public:
     
     Role getRole() const;
     void setRole(Role r);
+    void setRole(string role);
+    
 
     bool getIsDiscounted() const;
     void setIsDiscounted(bool isDiscounted);
 
     unordered_map<int, int> getDiscountList() const;
+    void setDiscountList(unordered_map<int, int> &discountList);
     bool addDiscount(int discount, int limit);
     bool deleteDiscount(int discount, int quantity);
 
-    Cart &getCart() const;
-    Order &getUserOrder() const;
+    Cart &getCart();
+    Order &getUserOrder();
+    void setCart(Cart &cart);
+    void setUserOrder(Order &order);
 };
 
 class UserList
@@ -241,4 +239,5 @@ void manageUserOrders();
 void computeDiscount(User &user);
 void changeGoodsDiscount();
 void changeUserDiscount();
+
 #endif

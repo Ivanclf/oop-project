@@ -18,15 +18,29 @@ Role User::getRole() const { return role; }
 
 void User::setRole(Role r) { role = r; }
 
-Cart &User::getCart() const { return const_cast<Cart&>(userCart); }
+void User::setRole(string role) { 
+    if (role == "admin") {
+        this->role = admin;
+    } else {
+        this->role = customer;
+    }
+ }
 
-Order &User::getUserOrder() const { return const_cast<Order&>(orders); }
+Cart &User::getCart() { return userCart; }
+
+Order &User::getUserOrder() { return orders; }
 
 bool User::getIsDiscounted() const { return isDisCount; }
 
 void User::setIsDiscounted(bool isDiscounted) { isDisCount = isDiscounted; }
 
 unordered_map<int, int> User::getDiscountList() const { return disCountList; }
+
+void User::setCart(Cart &cart) { userCart = cart; }
+
+void User::setUserOrder(Order &order) { orders = order; }
+
+void User::setDiscountList(unordered_map<int, int> &discountList) { disCountList = discountList; }
 
 bool User::addDiscount(int discount, int limit)
 {

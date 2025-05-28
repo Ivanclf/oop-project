@@ -1,5 +1,6 @@
 #include "../include/header.hpp"
 using namespace std;
+
 extern GoodsList *goods_list;
 extern UserList *user_list;
 
