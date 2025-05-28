@@ -82,6 +82,11 @@ void UserList::iterateUsers() const
                  << ", Quantity: " << item.quantity
                  << ", Status: " << item.status << "\n";
         }
+        cout << "Discount List: ";
+        for(auto &item : pair.second.getDiscountList())
+        {
+            cout << "Spend " << item.first << " get " << item.second << " off\n";
+        }
         cout << "----------------------------------------\n";
     }
 }
