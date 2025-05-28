@@ -1,5 +1,6 @@
 #include "../include/header.hpp"
 using namespace std;
+extern bool fileInit;
 
 User::User() : username(""), password(""), role(customer), userCart(), orders() {}
 User::User(string name, string pwd, Role r) : username(name), password(pwd), role(r) {}
@@ -18,13 +19,17 @@ Role User::getRole() const { return role; }
 
 void User::setRole(Role r) { role = r; }
 
-void User::setRole(string role) { 
-    if (role == "0") {
+void User::setRole(string role)
+{
+    if (role == "0")
+    {
         this->role = admin;
-    } else {
+    }
+    else
+    {
         this->role = customer;
     }
- }
+}
 
 Cart &User::getCart() { return userCart; }
 
@@ -68,18 +73,19 @@ bool User::deleteDiscount(int discount, int quantity)
 
 unordered_map<string, User> UserList::getUserList() const { return userList; }
 
-vector<User*> UserList::findUserByUsername(const string &username) const
+vector<User *> UserList::findUserByUsername(const string &username) const
 {
-    vector<User*> result;
+    vector<User *> result;
     auto it = userList.find(username);
     if (it != userList.end())
-        result.push_back(const_cast<User*>(&(it->second)));
+        result.push_back(const_cast<User *>(&(it->second)));
     return result;
 }
 
 void UserList::iterateUsers() const
 {
-    if(userList.empty()) {
+    if (userList.empty())
+    {
         cout << "No users" << endl;
         return;
     }
@@ -88,20 +94,20 @@ void UserList::iterateUsers() const
         cout << "Username: " << pair.first
              << ", Role: " << (pair.second.getRole() == admin ? "Admin" : "Customer") << "\n"
              << "Password: " << pair.second.getPassword() << "\n";
-        for(auto &item : pair.second.getCart().getItems())
+        for (auto &item : pair.second.getCart().getItems())
         {
             cout << "Item: " << item.goods->getName()
                  << ", Quantity: " << item.quantity
                  << ", Status: " << item.status << "\n";
         }
-        for(auto &item : pair.second.getUserOrder().getItems())
+        for (auto &item : pair.second.getUserOrder().getItems())
         {
             cout << "Item: " << item.goods->getName()
                  << ", Quantity: " << item.quantity
                  << ", Status: " << item.status << "\n";
         }
         cout << "Discount List: ";
-        for(auto &item : pair.second.getDiscountList())
+        for (auto &item : pair.second.getDiscountList())
         {
             cout << "Spend " << item.first << " get " << item.second << " off\n";
         }
@@ -125,8 +131,9 @@ vector<User> UserList::findUsersByRole(Role role) const
 bool UserList::deleteUser(const string &username)
 {
     bool result = userList.erase(username) > 0;
-    if (result) {
-        writeToFile();  // 同步到文件
+    if (result && fileInit)
+    {
+        writeToFile();
     }
     return result;
 }
@@ -138,18 +145,18 @@ bool UserList::addUser(const string &username, const string &password, Role role
         return false;
     }
     userList[username] = User(username, password, role);
-    writeToFile();  // 同步到文件
+    if (fileInit)
+        writeToFile();
     return true;
 }
 
 bool UserList::addUser(User user)
 {
     if (userList.find(user.getUsername()) != userList.end())
-    {
         return false;
-    }
     userList[user.getUsername()] = user;
-    writeToFile();  // 同步到文件
+    if (fileInit)
+        writeToFile();
     return true;
 }
 
@@ -161,7 +168,8 @@ bool UserList::updateUser(const string &username, const User &newUser)
         User updatedUser = newUser;
         userList.erase(it);
         userList[updatedUser.getUsername()] = updatedUser;
-        writeToFile();  // 同步到文件
+        if (fileInit)
+            writeToFile();
         return true;
     }
     return false;

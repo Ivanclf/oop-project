@@ -1,5 +1,6 @@
 #include "../include/header.hpp"
 using namespace std;
+extern bool fileInit;
 
 Goods::Goods() : name("Unnamed"), desc("No description"), category(Category::home), price(0.0), storage(0), isDiscounted(false), discountScale(0.0), discountedPrice(0.0) {}
 
@@ -163,7 +164,7 @@ vector<Goods*> GoodsList::findGoodsByStorage(int storage) const
 bool GoodsList::deleteGoods(const string &name)
 {
     bool result = goodsList.erase(name) > 0;
-    if (result) {
+    if (result && fileInit) {
         writeToFile();  // 同步到文件
     }
     return result;
@@ -176,7 +177,8 @@ bool GoodsList::addGoods(const string &name, const string &desc, Category catego
         return false; // 商品已存在
     }
     goodsList[name] = Goods(name, desc, category, price, storage, false, 0.0);
-    writeToFile();  // 同步到文件
+    if(fileInit)
+        writeToFile();  // 同步到文件
     return true;
 }
 
@@ -187,7 +189,8 @@ bool GoodsList::addGoods(const string &name, const string &desc, Category catego
         return false; // 商品已存在
     }
     goodsList[name] = Goods(name, desc, category, price, storage, isDiscounted, discountScale);
-    writeToFile();  // 同步到文件
+    if(fileInit)
+        writeToFile();  // 同步到文件
     return true;
 }
 
@@ -198,7 +201,8 @@ bool GoodsList::addGoods(Goods goods)
         return false; // 商品已存在
     }
     goodsList[goods.getName()] = goods;
-    writeToFile();  // 同步到文件
+    if(fileInit)
+        writeToFile();  // 同步到文件
     return true;
 }
 
@@ -210,7 +214,8 @@ bool GoodsList::updateGoods(const string &name, const Goods &newGoods)
         Goods updateGoods = newGoods;
         goodsList.erase(it);
         goodsList[updateGoods.getName()] = updateGoods;
-        writeToFile();  // 同步到文件
+        if(fileInit)
+            writeToFile();  // 同步到文件
         return true;
     }
     return false;
@@ -222,7 +227,8 @@ bool GoodsList::setStorage(const string &name, int decline)
     if(it != goodsList.end())
     {
         it->second.setStorage(it->second.getStorage() - decline);
-        writeToFile();  // 同步到文件
+        if(fileInit)
+            writeToFile();  // 同步到文件
         return true;
     }
     return false;

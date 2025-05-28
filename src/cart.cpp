@@ -3,6 +3,7 @@ using namespace std;
 
 extern GoodsList *goods_list;
 extern UserList *user_list;
+extern bool fileInit;
 
 void Cart::iterateGoods() const
 {
@@ -55,12 +56,14 @@ void Cart::addItem(string &name, int quantity)
         if (item.goods && item.goods->getName() == name)
         {
             item.quantity += quantity;
-            writeToFile();
+            if(fileInit)
+                writeToFile();
             return;
         }
     }
     items.emplace_back(goodsPtr, quantity);
-    writeToFile();
+    if(fileInit)
+        writeToFile();
 }
 
 bool Cart::deleteItem(string &name)
@@ -70,7 +73,8 @@ bool Cart::deleteItem(string &name)
         if (it->goods && it->goods->getName() == name)
         {
             items.erase(it);
-            writeToFile();
+            if(fileInit)
+                writeToFile();
             return true;
         }
     }
@@ -86,13 +90,14 @@ bool Cart::changeQuantity(string &name, const int quantity)
             if (quantity <= 0)
             {
                 bool result = deleteItem(name);
-                if (result) {
+                if (result && fileInit) {
                     writeToFile();
                 }
                 return result;
             }
             item.quantity = quantity;
-            writeToFile();
+            if(fileInit)
+                writeToFile();
             return true;
         }
     }

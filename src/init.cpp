@@ -1,16 +1,27 @@
 #include "../include/header.hpp"
-#include <filesystem>
 using namespace std;
-namespace fs = std::filesystem;
 
 extern UserList *user_list;
 extern GoodsList *goods_list;
+extern const string ROOT_DIR;
+extern const string USER_FILE;
+extern const string GOODS_FILE;
+extern bool fileInit;
 
 void __init__() {
+    ifstream userFile(ROOT_DIR + "lib/" + USER_FILE, ios::in);
+    ifstream goodsFile(ROOT_DIR + "lib/" + GOODS_FILE, ios::in);
+    bool userExists = userFile.is_open();
+    bool goodsExists = goodsFile.is_open();
+    userFile.close();
+    goodsFile.close();
 
-    if(fs::exists(ROOT_DIR + "lib/" + USER_FILE) && fs::exists(ROOT_DIR + "lib/" + GOODS_FILE)) {
+    fileInit = false;
+
+    if(userExists && goodsExists) {
         cout << "Reading from file..." << endl;
         readFromFile();
+        fileInit = true;
     } else {
         cout << "No file found, creating default data..." << endl;
         vector<Goods> goods = {
@@ -34,6 +45,7 @@ void __init__() {
         for (auto& u : users) {
             user_list->addUser(u);
         }
+        fileInit = true;
         writeToFile();
     }
 }

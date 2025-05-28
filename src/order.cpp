@@ -3,6 +3,7 @@ using namespace std;
 
 extern GoodsList *goods_list;
 extern UserList *user_list;
+extern bool fileInit;
 
 vector<Item> &Order::getItems() { return orderList; }
 
@@ -68,25 +69,29 @@ void Order::addItem(string &name, int quantity, order_status status) {
                 cout << "Not enough storage for " << name  << "\ntake the maximum" << endl;
                 item.quantity = goodsPtr->getStorage();
                 goodsPtr->setStorage(0);
-                writeToFile();
+                if(fileInit)
+                    writeToFile();
                 return;
             }
             item.quantity += quantity;
             item.status = status;
             goodsPtr->setStorage(goodsPtr->getStorage() - quantity);
-            writeToFile();
+            if(fileInit)
+                writeToFile();
             return;
         }
     }
     orderList.emplace_back(goodsPtr, quantity, status);
-    writeToFile();
+    if(fileInit)
+        writeToFile();
 }
 
 bool Order::deleteItem(string &name) {
     for (auto it = orderList.begin(); it != orderList.end(); ++it) {
         if (it->goods && it->goods->getName() == name) {
             orderList.erase(it);
-            writeToFile();
+            if(fileInit)
+                writeToFile();
             return true;
         }
     }
@@ -97,7 +102,8 @@ bool Order::setItemStatus(const string &itemName, order_status newStatus) {
     for (auto &item : orderList) {
         if (item.goods && item.goods->getName() == itemName) {
             item.status = newStatus;
-            writeToFile();
+            if(fileInit)
+                writeToFile();
             return true;
         }
     }
@@ -120,7 +126,8 @@ void Order::changeStorage() {
             int currentStorage = item.goods->getStorage();
             if (currentStorage >= item.quantity) {
                 item.goods->setStorage(currentStorage - item.quantity);
-                writeToFile();
+                if(fileInit)
+                    writeToFile();
             }
         }
     }

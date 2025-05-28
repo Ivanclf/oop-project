@@ -10,12 +10,13 @@
 #include <chrono>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 using namespace std;
 
-const string ROOT_DIR = "/home/kylin/桌面/oop/";
-const string USER_FILE = "user_list.txt";
-const string GOODS_FILE = "goods_list.txt";
+extern const string ROOT_DIR;
+extern const string USER_FILE;
+extern const string GOODS_FILE;
 
 enum order_status
 {
