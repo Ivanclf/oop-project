@@ -11,6 +11,6 @@ int main()
 {
 
     __init__();
-    // testController();
+    testController();
     return loginController();
 }

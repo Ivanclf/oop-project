@@ -240,5 +240,6 @@ void manageUserOrders();
 void computeDiscount(User &user);
 void changeGoodsDiscount();
 void changeUserDiscount();
+void iterateDiscount(User &user);
 
 #endif

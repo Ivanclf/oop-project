@@ -13,6 +13,7 @@ void customerController(User &user)
              << "\n4. Open your cart"
              << "\n5. Open your order"
              << "\n6. Compute discount"
+             << "\n7. Show your discount"
              << "\nChoose an option that you wanna do:\t";
         cin >> choice;
         switch (choice)
@@ -38,6 +39,9 @@ void customerController(User &user)
             break;
         case 6:
             computeDiscount(user);
+            break;
+        case 7:
+            iterateDiscount(user);
             break;
         default:
             cout << "you have pressed a wrong number, please press again!\n";

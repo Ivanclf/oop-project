@@ -205,3 +205,16 @@ void changeUserDiscount()
     }
 }
 
+void iterateDiscount(User &user)
+{
+    auto list = user.getDiscountList();
+    if(list.empty())
+    {
+        cout << "\nNo discount available";
+        return;
+    }
+    for(auto &it : list)
+    {
+        cout << "\nTotal reach " << it.first << " you will have " << it.second << " discount";
+    }
+}

@@ -1,6 +1,7 @@
 #include "../../include/header.hpp"
 using namespace std;
 extern GoodsList *goods_list;
+extern bool fileInit;
 
 void cartController(Cart &userCart, Order &order)
 {
@@ -51,6 +52,8 @@ void cartController(Cart &userCart, Order &order)
             }
             else
                 cout << "change failed! check if the storage is enough or name is correct!";
+            if(fileInit)
+                writeToFile();
             break;
         case 3:
             if (userCart.getSize() == 0)
@@ -71,6 +74,8 @@ void cartController(Cart &userCart, Order &order)
             }
             cout << "All items in cart have been added to your order.\n";
             userCart.getItems().clear();
+            if(fileInit)
+                writeToFile();
             break;
         case 4:
             cout << "Input the name of the item to add to order: ";
@@ -86,6 +91,8 @@ void cartController(Cart &userCart, Order &order)
                 }
             }
             cout << "Invalid item name.\n";
+            if(fileInit)
+                writeToFile();
         end_case4:
             break;
         default:
