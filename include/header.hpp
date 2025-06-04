@@ -1,57 +1,81 @@
+/**
+ * @file header.hpp
+ * @brief 电商系统核心头文件，定义了系统所需的所有数据结构和接口
+ * @details 包含用户管理、商品管理、购物车、订单等核心功能的数据结构定义
+ */
+
 #ifndef HEADER_HPP
 #define HEADER_HPP
 
-#include <iostream>
-#include <string>
-#include <unordered_map>
-#include <vector>
-#include <algorithm>
-#include <stdlib.h>
-#include <chrono>
-#include <fstream>
-#include <sstream>
-#include <filesystem>
+// 标准库头文件引入
+#include <iostream>      // 输入输出流
+#include <string>        // 字符串处理
+#include <unordered_map> // 哈希表容器
+#include <vector>        // 动态数组容器
+#include <algorithm>     // 算法库
+#include <stdlib.h>      // 标准库函数
+#include <chrono>        // 时间相关功能
+#include <fstream>       // 文件操作
+#include <sstream>       // 字符串流
+#include <filesystem>    // 文件系统操作
 
 using namespace std;
 
-extern const string ROOT_DIR;
-extern const string USER_FILE;
-extern const string GOODS_FILE;
+// 全局常量定义
+extern const string ROOT_DIR;    // 系统根目录
+extern const string USER_FILE;   // 用户数据文件路径
+extern const string GOODS_FILE;  // 商品数据文件路径
 
+/**
+ * @brief 订单状态枚举
+ * @details 定义了订单在整个生命周期中可能的状态
+ */
 enum order_status
 {
-    undefined,
-    unpayed,
-    not_delivered,
-    delivered,
-    checked
+    undefined,    // 未定义状态
+    unpayed,      // 未支付
+    not_delivered,// 未发货
+    delivered,    // 已发货
+    checked       // 已确认收货
 };
 
+/**
+ * @brief 商品类别枚举
+ * @details 定义了系统中商品的分类
+ */
 enum Category
 {
-    home,
-    food,
-    cloth,
-    baby_care
+    home,      // 家居用品
+    food,      // 食品
+    cloth,     // 服装
+    baby_care  // 母婴用品
 };
 
+/**
+ * @brief 用户角色枚举
+ * @details 定义了系统中的用户类型
+ */
 enum Role
 {
-    admin,
-    customer
+    admin,    // 管理员
+    customer  // 普通顾客
 };
 
+/**
+ * @brief 商品类
+ * @details 定义了商品的基本属性和操作方法
+ */
 class Goods
 {
 private:
-    string name;
-    string desc;
-    Category category;
-    double price;
-    int storage;
-    bool isDiscounted;
-    double discountScale;
-    double discountedPrice;
+    string name;           // 商品名称
+    string desc;           // 商品描述
+    Category category;     // 商品类别
+    double price;          // 商品价格
+    int storage;           // 库存数量
+    bool isDiscounted;     // 是否打折
+    double discountScale;  // 折扣比例
+    double discountedPrice;// 折扣后价格
 
 public:
     Goods();
@@ -83,6 +107,10 @@ public:
     double getDiscountedPrice() const;
 };
 
+/**
+ * @brief 商品列表类
+ * @details 管理所有商品的集合，提供商品的增删改查功能
+ */
 class GoodsList
 {
 private:
@@ -105,17 +133,26 @@ public:
     bool updateGoods(const string &name, const Goods &newGoods);
 };
 
+/**
+ * @brief 购物车项目结构体
+ * @details 定义了购物车中每个商品项的数据结构
+ */
 typedef struct ITEM
 {
-    Goods *goods;
-    int quantity;
-    order_status status;
+    Goods *goods;         // 商品指针
+    int quantity;         // 购买数量
+    order_status status;  // 订单状态
 
+    // 构造函数
     ITEM() : goods(nullptr), quantity(0), status(undefined) {}
     ITEM(Goods *goods, int quantity, order_status status) : goods(goods), quantity(quantity), status(status) {}
     ITEM(Goods *goods, int quantity) : goods(goods), quantity(quantity), status(undefined) {}
 } Item;
 
+/**
+ * @brief 购物车类
+ * @details 管理用户的购物车，提供商品的添加、删除、修改数量等功能
+ */
 class Cart
 {
 private:
@@ -130,6 +167,10 @@ public:
     int getSize() const;
 };
 
+/**
+ * @brief 订单类
+ * @details 管理用户的订单信息，包括订单状态管理、商品排序等功能
+ */
 class Order
 {
 private:
@@ -149,16 +190,20 @@ public:
     order_status &getItemStatus(string &itemName);
 };
 
+/**
+ * @brief 用户类
+ * @details 定义了用户的基本信息、购物车、订单等属性，以及相关的操作方法
+ */
 class User
 {
 private:
-    string username;
-    string password;
-    Role role;
-    Cart userCart;
-    Order orders;
-    bool isDisCount;
-    unordered_map<int, int> disCountList;
+    string username;                           // 用户名
+    string password;                           // 密码
+    Role role;                                 // 用户角色
+    Cart userCart;                             // 用户购物车
+    Order orders;                              // 用户订单
+    bool isDisCount;                           // 是否享受折扣
+    unordered_map<int, int> disCountList;      // 折扣列表（折扣值->使用次数）
 public:
     User();
     User(string name, string pwd, Role r);
@@ -190,6 +235,10 @@ public:
     void setUserOrder(Order &order);
 };
 
+/**
+ * @brief 用户列表类
+ * @details 管理所有用户信息，提供用户的增删改查功能
+ */
 class UserList
 {
 private:
@@ -205,41 +254,48 @@ public:
     bool updateUser(const string &username, const User &newUser);
 };
 
-void __init__();
-void testController();
-void printEnter();
+// 系统初始化和测试函数
+void __init__();           // 系统初始化
+void testController();     // 测试控制器
+void printEnter();         // 打印分隔线
 
+// 文件操作函数
+void writeToFile();        // 将数据写入文件
+void readFromFile();       // 从文件读取数据
 
-void writeToFile();  
-void readFromFile();  
+// 用户认证相关函数
+int loginController();     // 登录控制器
+void loginUser();          // 用户登录
+User registerUser();       // 用户注册
 
-int loginController();
-void loginUser();
-User registerUser();
+// 用户控制函数
+void adminController(User &user);      // 管理员控制器
+void customerController(User &user);   // 顾客控制器
 
-void adminController(User &user);
-void customerController(User &user);
+// 购物车控制函数
+void cartController(Cart &userCart, Order &order);  // 购物车控制器
+void addNew(Cart &userCart);                       // 添加新商品到购物车
 
-void cartController(Cart &userCart, Order &order);
-void addNew(Cart &userCart);
+// 用户管理函数
+void changePassword(User &user);       // 修改密码
+void listAllUsers();                   // 列出所有用户
+void updateUser();                     // 更新用户信息
 
-void changePassword(User &user);
-void listAllUsers();
-void updateUser();
+// 商品管理函数
+void listAllGoods(User &user);         // 列出所有商品
+void addNewGoods();                    // 添加新商品
+void updateGoods();                    // 更新商品信息
+void deleteGoods();                    // 删除商品
+void searchGoods();                    // 搜索商品
 
-void listAllGoods(User &user);
-void addNewGoods();
-void updateGoods();
-void deleteGoods();
-void searchGoods();
-
-void orderController(Order &orders);
-void changeOrderStatus(Order &orders);
-void change_Order_Status();
-void manageUserOrders();
-void computeDiscount(User &user);
-void changeGoodsDiscount();
-void changeUserDiscount();
-void iterateDiscount(User &user);
+// 订单管理函数
+void orderController(Order &orders);           // 订单控制器
+void changeOrderStatus(Order &orders);         // 修改订单状态
+void change_Order_Status();                    // 更改订单状态
+void manageUserOrders();                       // 管理用户订单
+void computeDiscount(User &user);              // 计算用户折扣
+void changeGoodsDiscount();                    // 修改商品折扣
+void changeUserDiscount();                     // 修改用户折扣
+void iterateDiscount(User &user);              // 遍历用户折扣信息
 
 #endif
