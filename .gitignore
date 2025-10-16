@@ -1,0 +1,78 @@
+# Compiled Object files
+*.o
+*.obj
+*.ko
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+main
+
+# Dependency files
+*.d
+
+# Output directory
+output/
+
+# Build directories
+build/
+bin/
+obj/
+
+# Library files
+lib/
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Data files (based on your project)
+user_list.txt
+goods_list.txt
+
+# Backup files
+*.bak
+*.backup

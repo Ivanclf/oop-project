@@ -4,7 +4,8 @@
 #
 
 # define the Cpp compiler to use
-CXX = g++
+# On macOS, prefer clang++ which is the native compiler
+CXX = clang++
 
 # define any compile-time flags
 CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
@@ -38,7 +39,7 @@ else
 MAIN	:= main
 SOURCEDIRS	:= $(shell find $(SRC) -type d)
 INCLUDEDIRS	:= $(shell find $(INCLUDE) -type d)
-LIBDIRS		:= $(shell find $(LIB) -type d)
+LIBDIRS		:= $(shell find $(LIB) -type d 2>/dev/null)
 FIXPATH = $1
 RM = rm -f
 MD	:= mkdir -p
@@ -92,16 +93,23 @@ clean:
 	$(RM) $(OUTPUTMAIN)
 	$(RM) $(call FIXPATH,$(OBJECTS))
 	$(RM) $(call FIXPATH,$(DEPS))
-	$(RM) $(call FIXPATH,$(LIB)/user_list.txt)
-	$(RM) $(call FIXPATH,$(LIB)/goods_list.txt)
+	@if [ -d "$(LIB)" ]; then \
+		$(RM) $(call FIXPATH,$(LIB)/user_list.txt); \
+		$(RM) $(call FIXPATH,$(LIB)/goods_list.txt); \
+	fi
 	@echo Cleanup complete!
 
 .PHONY: file
 file:
-	$(RM) $(call FIXPATH,$(LIB)/user_list.txt)
-	$(RM) $(call FIXPATH,$(LIB)/goods_list.txt)
-	@echo User and goods list files cleaned!
+	@if [ -d "$(LIB)" ]; then \
+		$(RM) $(call FIXPATH,$(LIB)/user_list.txt); \
+		$(RM) $(call FIXPATH,$(LIB)/goods_list.txt); \
+		echo "User and goods list files cleaned!"; \
+	else \
+		echo "No lib directory found, skipping file cleanup."; \
+	fi
 
+.PHONY: run
 run: all
 	./$(OUTPUTMAIN)
 	@echo Executing 'run: all' complete!
